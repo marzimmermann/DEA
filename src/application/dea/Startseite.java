@@ -25,6 +25,7 @@ import javax.swing.UIManager;
  *
  */ 
 
+
 public class Startseite extends JDialog {
 
 	/**
