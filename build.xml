@@ -1,0 +1,45 @@
+<?xml version="1.0"?>
+
+<project name="dea" default="archive">
+    
+    <target name="init">
+        <mkdir dir="build/classes"/>
+        <mkdir dir="dist"/>
+    </target>
+    
+    <target name="compile" depends="init">
+        <javac includeantruntime="true"
+               srcdir="./" destdir="build/classes"/>
+    </target>
+    
+    <target name="archive" depends="compile">
+        <jar destfile="dist/dea.jar"
+             basedir="build/classes"/>
+    </target>
+    
+    <target name="clean" depends="init">
+        <delete dir="build"/>
+        <delete dir="dist"/>
+    </target>
+    
+    <!--muss noch ergaenzt werden-->
+    <target name="execute" depends="compile">
+        <java classpath="build/classes"
+              classname="application.dea.Hauptklasse"/>
+    </target>
+    
+    <!--muss noch ergaenzt werden-->
+    <target name="execute-jar" depends="compile">
+        <java classpath="dist/dea.jar"
+              classname="application.dea.Hauptklasse"/>
+    </target>
+    
+    <!--muss noch ergaenzt werden-->
+    <target name="execute-redirect-stdout" depends="compile">
+        <java classpath="build/classes"
+              classname="application.dea.Hauptklasse"
+              input="./src/data/???"
+              output="???.out"/>
+    </target>
+    
+</project>
