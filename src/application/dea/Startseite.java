@@ -83,6 +83,7 @@ public class Startseite extends JDialog {
 		eingabe.setBounds(155, 119, 277, 36);
 		inhaltPanel.add(eingabe);
 		eingabe.setColumns(15);
+		eingabe.selectAll();
 	}
 	
 	private void erstelleOKKnopf() {
