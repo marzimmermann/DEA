@@ -168,6 +168,102 @@ public class DEA implements Serializable {
         return validiert = (anzTransitionen == zustaende.size()*alphabet.size());
     }
     
+    /** gibt sich selbst als minimalen DEA zurueck */
+    public DEA minimiere() {
+    
+        /*
+         * ist noch nicht ausreichend getestet
+         * und auch nicht schoen implementiert
+         */
+    
+        if (istGesperrt() || !istValidiert()) {
+            return null;
+        }
+        
+        // berechne Markierungstabelle
+        Zustand zust[] = new Zustand[zustaende.size()];
+        zustaende.values().toArray(zust);
+        boolean feld[][] = new boolean[zust.length][zust.length];
+        HashMap<Zustand, Integer> getIndex = new HashMap<>();
+        
+        // markiere jedes Zustandspaar mit genau einem akzeptierenden Zustand
+        for (int i = 0; i < zust.length; i++) {
+            getIndex.put(zust[i], i);
+            for (int j = 0; j < i; j++) {
+                if (zust[i].istAkzeptierend() ^ zust[j].istAkzeptierend()) {
+                    feld[j][i] = true;
+                }
+            }
+        }
+        
+        // markiere rekursiv andere Zustaende
+        boolean veraendert = false;
+        do {
+            veraendert = false;
+            for (int i = 0; i < zust.length; i++) {
+                for (int j = 0; j < i; j++) {
+                    if (feld[j][i]) {
+                        continue; // nur unmarkierte Paare betrachten
+                    }
+                    for (char c : alphabet) {
+                        int z1 = getIndex.get(zust[i].getTransition(c));
+                        int z2 = getIndex.get(zust[j].getTransition(c));
+                        if (feld[z1][z2] || feld[z2][z1]) {
+                            veraendert = true;
+                            feld[j][i] = true;
+                        }
+                    }
+                }
+            }
+        } while (veraendert);
+        
+        // initialisiere neuen DEA
+        DEA tmp = new DEA(name);
+        tmp.alphabet.addAll(this.alphabet);
+        
+        // fasse nicht markierte Zustandspaare zusammen
+        int zustId = 0;
+        int neuerZst[] = new int[zust.length];
+        for (int i = 0; i < zust.length; i++) {
+            for (int j = 0; j < i; j++) {
+                if (!feld[j][i]) {
+                    zustId++;
+                    neuerZst[i] = zustId;
+                    neuerZst[j] = zustId;
+                    tmp.fuegeZustandHinzu(""+zustId, zust[i].istAkzeptierend());
+                }
+            }
+        }
+
+        // nimm restliche Zustaende
+        for (int i = 0; i < neuerZst.length; i++) {
+            if (neuerZst[i] == 0) {
+                neuerZst[i] = ++zustId;
+                tmp.fuegeZustandHinzu(""+zustId, zust[i].istAkzeptierend());
+            }
+        }
+        
+        // setze Startzustand
+        tmp.setStart(""+(neuerZst[getIndex.get(this.start)]));
+        
+        // fuege Transitionen hinzu
+        boolean benutzt[] = new boolean[zustId];
+        for (int i = 0; i < zust.length; i++) {
+            benutzt[neuerZst[i]-1] = true;
+            for (char c : alphabet) {
+                tmp.fuegeTransitionHinzu(""+neuerZst[i], c, ""+neuerZst[getIndex.get(zust[i].getTransition(c))]);
+            }
+        }
+        
+        // pruefe, ob Minimierung geklappt hat
+        tmp.validiere();
+        if (!tmp.istValidiert()) {
+            throw new RuntimeException("Minimierung hat nicht funkioniert");
+        }
+        
+        return tmp;
+    }
+    
     /** prueft, ob es sich beim uebergebenen String um eine gueltige Eingabe handelt */
     public boolean istGueltigeEingabe(String eingabe) {
         for (char c : eingabe.toCharArray()) {
@@ -243,5 +339,90 @@ public class DEA implements Serializable {
     /** gibt eine iterierbare Darstellung aller Zustandsobjekte zurueck */
     public Iterable<Zustand> getZustaende() {
         return zustaende.values();
+    }
+    
+    /** Main-Methode zum Testen */
+    public static void main(String args[]) {
+        /*
+         * beide folgenden Beispiele (zur Minimierung) scheinen zu stimmen
+         */
+        
+        System.out.println("Erster Test:\n");
+        
+        DEA d = new DEA("test");
+        d.fuegeZeichenHinzu("01");
+        d.fuegeZustandHinzu("A", false);
+        d.fuegeZustandHinzu("B", false);
+        d.fuegeZustandHinzu("C", true);
+        d.fuegeZustandHinzu("D", false);
+        d.fuegeZustandHinzu("E", false);
+        d.fuegeZustandHinzu("F", false);
+        d.fuegeZustandHinzu("G", false);
+        d.fuegeZustandHinzu("H", false);
+        
+        d.fuegeTransitionHinzu("A", '0', "B");
+        d.fuegeTransitionHinzu("A", '1', "F");
+        d.fuegeTransitionHinzu("B", '0', "G");
+        d.fuegeTransitionHinzu("B", '1', "C");
+        d.fuegeTransitionHinzu("C", '0', "A");
+        d.fuegeTransitionHinzu("C", '1', "C");
+        d.fuegeTransitionHinzu("D", '0', "C");
+        d.fuegeTransitionHinzu("D", '1', "G");
+        d.fuegeTransitionHinzu("E", '0', "H");
+        d.fuegeTransitionHinzu("E", '1', "F");
+        d.fuegeTransitionHinzu("F", '0', "C");
+        d.fuegeTransitionHinzu("F", '1', "G");
+        d.fuegeTransitionHinzu("G", '0', "G");
+        d.fuegeTransitionHinzu("G", '1', "E");
+        d.fuegeTransitionHinzu("H", '0', "G");
+        d.fuegeTransitionHinzu("H", '1', "C");
+        
+        d.setStart("A");
+        d.validiere();
+        d = d.minimiere();
+        
+        for (Zustand z : d.getZustaende()) {
+            System.out.println(z.getName()+" (" + z.istAkzeptierend() + "):");
+            System.out.println("     0 -> " + z.getTransition('0').getName());
+            System.out.println("     1 -> " + z.getTransition('1').getName());
+        }
+        
+        System.out.println("\n\nZweiter Test:\n");
+        
+        d = new DEA("test");
+        d.fuegeZeichenHinzu("01");
+        d.fuegeZustandHinzu("0", false);
+        d.fuegeZustandHinzu("1", false);
+        d.fuegeZustandHinzu("2", false);
+        d.fuegeZustandHinzu("3", false);
+        d.fuegeZustandHinzu("4", false);
+        d.fuegeZustandHinzu("5", true);
+        d.fuegeZustandHinzu("6", true);
+        
+        d.fuegeTransitionHinzu("0", '0', "1");
+        d.fuegeTransitionHinzu("0", '1', "1");
+        d.fuegeTransitionHinzu("1", '0', "2");
+        d.fuegeTransitionHinzu("1", '1', "3");
+        d.fuegeTransitionHinzu("2", '0', "5");
+        d.fuegeTransitionHinzu("2", '1', "4");
+        d.fuegeTransitionHinzu("3", '0', "6");
+        d.fuegeTransitionHinzu("3", '1', "4");
+        d.fuegeTransitionHinzu("4", '0', "5");
+        d.fuegeTransitionHinzu("4", '1', "6");
+        d.fuegeTransitionHinzu("5", '0', "5");
+        d.fuegeTransitionHinzu("5", '1', "5");
+        d.fuegeTransitionHinzu("6", '0', "6");
+        d.fuegeTransitionHinzu("6", '1', "6");
+        
+        d.setStart("0");
+        d.validiere();
+        d = d.minimiere();
+        
+        for (Zustand z : d.getZustaende()) {
+            System.out.println(z.getName()+" (" + z.istAkzeptierend() + "):");
+            System.out.println("     0 -> " + z.getTransition('0').getName());
+            System.out.println("     1 -> " + z.getTransition('1').getName());
+        }
+        
     }
 }

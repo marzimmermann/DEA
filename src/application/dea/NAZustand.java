@@ -11,7 +11,7 @@ public class NAZustand extends Zustand {
         this.setName(name);
     }
     
-    /** gibt zurueck, ob der Zustand akzeptieren ist */
+    /** gibt zurueck, ob der Zustand akzeptierend ist */
     @Override
     public boolean istAkzeptierend() {
         return false;

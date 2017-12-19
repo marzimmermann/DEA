@@ -28,6 +28,11 @@
               classname="application.dea.Hauptklasse"/>
     </target>
     
+    <target name="execute-dea-minimize-test" depends="compile">
+        <java classpath="build/classes"
+              classname="application.dea.DEA"/>
+    </target>
+    
     <!--muss noch ergaenzt werden-->
     <target name="execute-jar" depends="compile">
         <java classpath="dist/dea.jar"

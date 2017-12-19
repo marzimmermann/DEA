@@ -72,6 +72,6 @@ public abstract class Zustand implements Serializable {
         this.y = y;
     }
     
-    /** soll zurueckgeben, ob der Zustand akzeptieren ist */
+    /** soll zurueckgeben, ob der Zustand akzeptierend ist */
     public abstract boolean istAkzeptierend();
 }
