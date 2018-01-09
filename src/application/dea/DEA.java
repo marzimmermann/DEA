@@ -13,6 +13,7 @@ public class DEA implements Serializable {
     private String name, eingabe = "";
     private boolean validiert = false; // ob der Automat validiert ist und ausgefuehrt werden darf
     private boolean gesperrt = false; // ob der Automat fuer Aenderungen gesperrt ist (waehrend eines Durchlaufs)
+    private boolean gespeichert = false; // ob der Automat in seiner aktuellen Form gespeichert wurde
     private int zustandId = 0; // zur Durchnummerierung der Zustaende, falls kein Name angegeben wird
     private int zeichenIndex; // Position des zu lesenden Zeichens waehrend einer Ausfuehrung
     private HashSet<Character> alphabet = new HashSet<>();
@@ -26,6 +27,11 @@ public class DEA implements Serializable {
     /** erzeugt einen neuen Zustand mit dem angegebenen Namen */
     public DEA(String name) {
         setName(name);
+    }
+    
+    /** Copy-Konstruktor */
+    public DEA(DEA dea) {
+        this.kopiere(dea);
     }
     
     /*
@@ -78,6 +84,7 @@ public class DEA implements Serializable {
         if (zustaende.containsKey(name)) {
             return false;
         }
+        gespeichert = false;
         Zustand zustand = akzeptierend? new AZustand(name) : new NAZustand(name);
         zustaende.put(name, zustand);
         return true;
@@ -88,6 +95,7 @@ public class DEA implements Serializable {
         while(!fuegeZustandHinzu(""+(zustandId++), akzeptierend)) {
             // hochzaehlen, falls Namen schon existieren
         }
+        gespeichert = false;
         return true;
     }
     
@@ -97,6 +105,7 @@ public class DEA implements Serializable {
         if (tmp == null) {
             return false;
         }
+        gespeichert = false;
         tmp.setName(nach);
         zustaende.put(nach, tmp);
         zustaende.remove(von);
@@ -108,6 +117,7 @@ public class DEA implements Serializable {
         if (!zustaende.containsKey(name)) {
             return false;
         }
+        gespeichert = false;
         Zustand zustand = zustaende.get(name);
         zustaende.remove(name);
         for (Zustand z : zustaende.values()) {
@@ -121,11 +131,16 @@ public class DEA implements Serializable {
         if (!istImAlphabet(ueber)) {
             return;
         }
+        gespeichert = false;
         zustaende.get(von).fuegeTransitionHinzu(ueber, zustaende.get(nach));
     }
     
     /** loescht eine bestehende Transition */
     public void loescheTransition(String von, char ueber) {
+        if (!zustaende.containsKey(von)) {
+            return;
+        }
+        gespeichert = false;
         zustaende.get(von).loescheTransition(ueber);
     }
     
@@ -141,11 +156,13 @@ public class DEA implements Serializable {
     
     /** erweitert das Alphabet um ein Zeichen */
     public void fuegeZeichenHinzu(char c) {
+        gespeichert = false;
         alphabet.add(c);
     }
     
     /** loescht ein Zeichen aus dem Alphabet (und alle damit verbundenen Transitionen) */
     public void loescheZeichen(char c) {
+        gespeichert = false;
         alphabet.remove(c);
         for (Zustand z : zustaende.values()) {
             z.loescheTransition(c);
@@ -165,7 +182,9 @@ public class DEA implements Serializable {
         for (Zustand z : zustaende.values()) {
             anzTransitionen += z.zaehleTransitionen();
         }
-        return validiert = (anzTransitionen == zustaende.size()*alphabet.size());
+        validiert = (anzTransitionen == zustaende.size()*alphabet.size());
+        gespeichert = false;
+        return validiert;
     }
     
     /** gibt sich selbst als minimalen DEA zurueck */
@@ -179,6 +198,7 @@ public class DEA implements Serializable {
         if (istGesperrt() || !istValidiert()) {
             return null;
         }
+        gespeichert = false;
         
         // berechne Markierungstabelle
         Zustand zust[] = new Zustand[zustaende.size()];
@@ -249,9 +269,11 @@ public class DEA implements Serializable {
         // fuege Transitionen hinzu
         boolean benutzt[] = new boolean[zustId];
         for (int i = 0; i < zust.length; i++) {
-            benutzt[neuerZst[i]-1] = true;
-            for (char c : alphabet) {
-                tmp.fuegeTransitionHinzu(""+neuerZst[i], c, ""+neuerZst[getIndex.get(zust[i].getTransition(c))]);
+            if (!benutzt[neuerZst[i]-1]) {
+                benutzt[neuerZst[i]-1] = true;
+                for (char c : alphabet) {
+                    tmp.fuegeTransitionHinzu(""+neuerZst[i], c, ""+neuerZst[getIndex.get(zust[i].getTransition(c))]);
+                }
             }
         }
         
@@ -262,6 +284,44 @@ public class DEA implements Serializable {
         }
         
         return tmp;
+    }
+    
+    /** kopiert alle Eigenschaften des uebergebenen DEA */
+    public void kopiere(DEA dea) {
+        /* primitive Attribute */
+        this.name = dea.name;
+        this.eingabe = dea.eingabe;
+        this.validiert = dea.validiert;
+        this.gesperrt = dea.gesperrt;
+        this.gespeichert = dea.gespeichert;
+        this.zustandId = dea.zustandId;
+        this.zeichenIndex = dea.zeichenIndex;
+        
+        /* komplexere Attribute */
+        this.alphabet = new HashSet<>();
+        for (char c : dea.alphabet) {
+            this.alphabet.add(c);
+        }
+        
+        /* Aufbau der Zustandsstruktur */
+        this.zustaende = new HashMap<>();
+        // Zustaende erstellen
+        for (String s : dea.zustaende.keySet()) {
+            if (dea.zustaende.get(s) instanceof AZustand) {
+                this.zustaende.put(s, new AZustand(s));
+            } else {
+                this.zustaende.put(s, new NAZustand(s));
+            }
+        }
+        // Transitionen uebernehmen
+        for (String s : dea.zustaende.keySet()) {
+            for (char ueber : this.alphabet) {
+                Zustand nach = dea.zustaende.get(s).getTransition(ueber);
+                if (nach != null) {
+                    this.zustaende.get(s).fuegeTransitionHinzu(ueber, this.zustaende.get(nach.getName()));
+                }
+            }
+        }
     }
     
     /** prueft, ob es sich beim uebergebenen String um eine gueltige Eingabe handelt */
@@ -280,7 +340,11 @@ public class DEA implements Serializable {
     
     /** speichert den DEA im angegebenen Verzeichnis */
     public boolean speichere(String verzeichnis) {
-        return Speicher.speichere(this, verzeichnis+"/"+name);
+        boolean tmp = Speicher.speichere(this, verzeichnis+"/"+name);
+        if (tmp) {
+            gespeichert = true;
+        }
+        return tmp;
     }
     
     /*
@@ -297,8 +361,14 @@ public class DEA implements Serializable {
         return validiert;
     }
     
+    /** gibt zurueck, ob der DEA schon gespeichert wurde */
+    public boolean istGespeichert() {
+        return gespeichert;
+    }
+    
     /** setzt den Startzustand */
     public void setStart(String zustand) {
+        gespeichert = false;
         start = zustaende.get(zustand);
     }
     
@@ -307,6 +377,7 @@ public class DEA implements Serializable {
         if (!istGueltigeEingabe(eingabe)) {
             return false;
         }
+        gespeichert = false;
         this.eingabe = eingabe;
         return true;
     }
@@ -314,6 +385,15 @@ public class DEA implements Serializable {
     /** gibt den aktuellen Zustand zurueck */
     public String getAktuellerZustand() {
         return aktuellerZustand.getName();
+    }
+
+    /** gibt das Alphabet als String zurueck */
+    public String getAlphabet() {
+        StringBuilder tmp = new StringBuilder(alphabet.size());
+        for (Character c : alphabet) {
+            tmp.append(c.charValue());
+        }
+        return tmp.toString();
     }
     
     /** prueft, ob ein Zeichen Teil des Alphabets ist */
@@ -333,6 +413,7 @@ public class DEA implements Serializable {
     
     /** setzt den Dateinamen um */
     public void setName(String name) {
+        gespeichert = false;
         this.name = name;
     }
     
@@ -417,6 +498,7 @@ public class DEA implements Serializable {
         d.setStart("0");
         d.validiere();
         d = d.minimiere();
+        d = new DEA(d);
         
         for (Zustand z : d.getZustaende()) {
             System.out.println(z.getName()+" (" + z.istAkzeptierend() + "):");

@@ -11,14 +11,15 @@ import java.io.IOException;
 import java.io.Serializable;
 
 public class Konfiguration implements Serializable {
-    private String arbeitsverzeichnis;
+    private String arbeitsverzeichnis, letzterDea;
     private int x, y;
     public static final String dateiname = ".dea_editor.konfiguration";
     
     /** speichert die Konfiguration mit der Fenstergroesse x, y */
-    public boolean speichere(int x, int y) {
+    public boolean speichere(int x, int y, String letzter) {
         this.x = x;
         this.y = y;
+        this.letzterDea = letzter;
         return Speicher.speichere(this, System.getProperty("user.home")+"/"+dateiname);
     }
     
@@ -29,6 +30,7 @@ public class Konfiguration implements Serializable {
             return false; // Datei nicht vorhanden oder sonstiger Fehler
         }
         this.arbeitsverzeichnis = tmp.arbeitsverzeichnis;
+        this.letzterDea = tmp.letzterDea;
         this.x = tmp.x;
         this.y = tmp.y;
         return true;
@@ -37,6 +39,11 @@ public class Konfiguration implements Serializable {
     /** gibt das Arbeitsverzeichnis zurueck */
     public String getArbeitsverzeichnis() {
         return arbeitsverzeichnis;
+    }
+    
+    /** gibt den Pfad des zuletzt bearbeiteten DEAs zurueck */
+    public String getLetzterDea() {
+        return letzterDea;
     }
     
     /** gibt die Fensterbreite zurueck */
