@@ -55,13 +55,13 @@ public class DEA implements Serializable {
         }
         aktuellerZustand = aktuellerZustand.getTransition(liesZeichen());
         if (istFertig()) {
-            gesperrt = false;
+            stoppe();
         }
     }
     
     /** stoppt die aktuelle Ausfuehrung des Automaten */
     public void stoppe() {
-        aktuellerZustand = null;
+        aktuellerZustand = start;
         gesperrt = false;
     }
     
@@ -81,6 +81,9 @@ public class DEA implements Serializable {
     
     /** fuegt einen neuen Zustand per Namen hinzu */
     public boolean fuegeZustandHinzu(String name, boolean akzeptierend) {
+        if (name == null || name.isEmpty()) {
+            return fuegeZustandHinzu(akzeptierend);
+        }
         if (zustaende.containsKey(name)) {
             return false;
         }
@@ -288,6 +291,13 @@ public class DEA implements Serializable {
     
     /** kopiert alle Eigenschaften des uebergebenen DEA */
     public void kopiere(DEA dea) {
+        this.gesperrt = false; // damit importieren moeglich ist
+        
+        /* komplexere Attribute */
+        this.alphabet = new HashSet<>();
+        this.zustaende = new HashMap<>();
+        this.importiere(dea); // importiert Alphabet, Zustaende und Transitionen
+        
         /* primitive Attribute */
         this.name = dea.name;
         this.eingabe = dea.eingabe;
@@ -297,21 +307,38 @@ public class DEA implements Serializable {
         this.zustandId = dea.zustandId;
         this.zeichenIndex = dea.zeichenIndex;
         
-        /* komplexere Attribute */
-        this.alphabet = new HashSet<>();
-        for (char c : dea.alphabet) {
-            this.alphabet.add(c);
+    }
+    
+    /** importiert den uebergebenen DEA in den aktuellen hinein */
+    public void importiere(DEA dea) {
+        if (gesperrt) {
+            return;
         }
+        this.alphabet.addAll(dea.alphabet); // Alphabete werden vereinigt
+        this.validiert = false;
+        this.gespeichert = false;
         
         /* Aufbau der Zustandsstruktur */
-        this.zustaende = new HashMap<>();
         // Zustaende erstellen
+        HashMap<String, String> umbenennungen = new HashMap<>();
         for (String s : dea.zustaende.keySet()) {
+            if (this.zustaende.containsKey(s)) {
+                int zahl = 1;
+                while (this.zustaende.containsKey(s+zahl)) {
+                    zahl++;
+                }
+                umbenennungen.put(s, s+zahl);
+                s += zahl;
+            }
             if (dea.zustaende.get(s) instanceof AZustand) {
                 this.zustaende.put(s, new AZustand(s));
             } else {
                 this.zustaende.put(s, new NAZustand(s));
             }
+        }
+        // doppelte Zustaende umbenennen
+        for (String s : umbenennungen.keySet()) {
+            dea.benneneZustandUm(s, umbenennungen.get(s));
         }
         // Transitionen uebernehmen
         for (String s : dea.zustaende.keySet()) {
@@ -322,6 +349,7 @@ public class DEA implements Serializable {
                 }
             }
         }
+        
     }
     
     /** prueft, ob es sich beim uebergebenen String um eine gueltige Eingabe handelt */
@@ -340,7 +368,7 @@ public class DEA implements Serializable {
     
     /** speichert den DEA im angegebenen Verzeichnis */
     public boolean speichere(String verzeichnis) {
-        boolean tmp = Speicher.speichere(this, verzeichnis+"/"+name);
+        boolean tmp = Speicher.speichere(this, verzeichnis+"/"+name+".dea");
         if (tmp) {
             gespeichert = true;
         }
@@ -370,6 +398,7 @@ public class DEA implements Serializable {
     public void setStart(String zustand) {
         gespeichert = false;
         start = zustaende.get(zustand);
+        aktuellerZustand = start;
     }
     
     /** setzt die Eingabe des Automaten um und gibt zurueck, ob die Eingabe gueltig ist */
@@ -468,6 +497,8 @@ public class DEA implements Serializable {
             System.out.println("     1 -> " + z.getTransition('1').getName());
         }
         
+        DEA f = d;
+        
         System.out.println("\n\nZweiter Test:\n");
         
         d = new DEA("test");
@@ -506,5 +537,15 @@ public class DEA implements Serializable {
             System.out.println("     1 -> " + z.getTransition('1').getName());
         }
         
-    }
+        System.out.println("\n\nDritter Test\n");
+        
+        d.importiere(f);
+        for (Zustand z : d.getZustaende()) {
+            System.out.println(z.getName()+" (" + z.istAkzeptierend() + "):");
+            System.out.println("     0 -> " + z.getTransition('0').getName());
+            System.out.println("     1 -> " + z.getTransition('1').getName());
+        }
+        
+
+        }
 }
