@@ -6,7 +6,6 @@ import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
-
 import java.awt.Font;
 import java.awt.Color;
 import javax.swing.JTextField;
@@ -25,26 +24,13 @@ import javax.swing.UIManager;
  *
  */ 
 
-
 public class Startseite extends JDialog {
 
-	/**
-	 * 
-	 */
-	
 	private static final long serialVersionUID = 1L;
 	private final JPanel inhaltPanel = new JPanel();
 	private JTextField eingabe;
 	private JButton okKnopf;
 	private static JLabel ueberschrift;
-	/**
-	 * Mini Main Methode zum Testen
-	 */
-	public static void main(String[] args) {
-		Startseite dia = new Startseite();
-		System.out.println(dia.getVerzeichnis());
-	}
-	
 
 	/**
 	 * Create the dialog.
@@ -70,7 +56,7 @@ public class Startseite extends JDialog {
 	private void erstelleUeberschrift() {
 		ueberschrift = new JLabel("DEA-Editor");
 		ueberschrift.setBounds(137, 25, 188, 61);
-		ueberschrift.setForeground(UIManager.getColor("OptionPane.questionDialog.titlePane.foreground"));
+        ueberschrift.setForeground(UIManager.getColor("OptionPane.questionDialog.titlePane.foreground"));
 		ueberschrift.setFont(new Font("DialogInput", Font.BOLD | Font.ITALIC, 25)); // Farbe + Groesse
 		inhaltPanel.add(ueberschrift);
 		JLabel anweisung = new JLabel("Verzeichnis angeben:");

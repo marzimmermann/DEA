@@ -46,6 +46,11 @@ public class Konfiguration implements Serializable {
         return letzterDea;
     }
     
+    /** setzt den Pfad des zuletzt bearbeiteten DEAs um */
+    public void setLetzterDea(String dea) {
+        letzterDea = dea;
+    }
+    
     /** gibt die Fensterbreite zurueck */
     public int getX() {
         return x;
