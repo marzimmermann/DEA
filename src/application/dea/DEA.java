@@ -306,7 +306,7 @@ public class DEA implements Serializable {
         this.gespeichert = dea.gespeichert;
         this.zustandId = dea.zustandId;
         this.zeichenIndex = dea.zeichenIndex;
-        
+        this.start = this.zustaende.get(dea.start.getName());
     }
     
     /** importiert den uebergebenen DEA in den aktuellen hinein */
@@ -322,34 +322,26 @@ public class DEA implements Serializable {
         // Zustaende erstellen
         HashMap<String, String> umbenennungen = new HashMap<>();
         for (String s : dea.zustaende.keySet()) {
+            String neuerName = s;
             if (this.zustaende.containsKey(s)) {
                 int zahl = 1;
                 while (this.zustaende.containsKey(s+zahl)) {
                     zahl++;
                 }
-                umbenennungen.put(s, s+zahl);
-                s += zahl;
+                neuerName = s + zahl;
             }
-            if (dea.zustaende.get(s) instanceof AZustand) {
-                this.zustaende.put(s, new AZustand(s));
-            } else {
-                this.zustaende.put(s, new NAZustand(s));
-            }
-        }
-        // doppelte Zustaende umbenennen
-        for (String s : umbenennungen.keySet()) {
-            dea.benneneZustandUm(s, umbenennungen.get(s));
+            umbenennungen.put(s, neuerName);
+            this.fuegeZustandHinzu(neuerName, dea.zustaende.get(s).istAkzeptierend());
         }
         // Transitionen uebernehmen
         for (String s : dea.zustaende.keySet()) {
             for (char ueber : this.alphabet) {
                 Zustand nach = dea.zustaende.get(s).getTransition(ueber);
                 if (nach != null) {
-                    this.zustaende.get(s).fuegeTransitionHinzu(ueber, this.zustaende.get(nach.getName()));
+                    this.fuegeTransitionHinzu(umbenennungen.get(s), ueber, umbenennungen.get(nach.getName()));
                 }
             }
         }
-        
     }
     
     /** prueft, ob es sich beim uebergebenen String um eine gueltige Eingabe handelt */
