@@ -3,33 +3,20 @@ package application.dea;
 import java.awt.EventQueue;
 import java.io.File;
 
+import javax.swing.JOptionPane;
+
 public class Hauptklasse {
 
 	
 	public static void main(String[] args) {
-		boolean gesetztesArbeitsverzeichnis = false;
 		Konfiguration konfiguration = new Konfiguration();
 		if(!konfiguration.lade()) {
-			File verzeichnis;
-			do {
-				Startseite dia = new Startseite();
-				verzeichnis = new File(dia.getVerzeichnis());
-				if( verzeichnis.isDirectory()) {
-					gesetztesArbeitsverzeichnis = true;
-				}
-				else if(!verzeichnis.exists() ) {
-					verzeichnis.mkdirs();
-					gesetztesArbeitsverzeichnis = true;
-				}
-				else {
-					new Fehlermeldung("Ungueltige Eingabe");
-				}
-			} 
-			while( !gesetztesArbeitsverzeichnis );
+			String verzeichnis = new Startseite().getVerzeichnis();
 			konfiguration.setArbeitsverzeichnis(verzeichnis.toString());
-			DEA d = new DEA("tmp.dea");
+			DEA d = new DEA("");
 			konfiguration.setLetzterDea(konfiguration.getArbeitsverzeichnis()+"/"+d.getName());
 		}
+		Editor e = new Editor(konfiguration);
 		
 		
 		

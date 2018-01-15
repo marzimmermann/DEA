@@ -18,7 +18,7 @@ public class DEA implements Serializable {
     private int zeichenIndex; // Position des zu lesenden Zeichens waehrend einer Ausfuehrung
     private HashSet<Character> alphabet = new HashSet<>();
     private HashMap<String, Zustand> zustaende = new HashMap<>();
-    private Zustand start, aktuellerZustand;
+    private Zustand start, aktuellerZustand = start;
     
     /*
      * Konstruktoren
@@ -360,7 +360,7 @@ public class DEA implements Serializable {
     
     /** speichert den DEA im angegebenen Verzeichnis */
     public boolean speichere(String verzeichnis) {
-        boolean tmp = Speicher.speichere(this, verzeichnis+"/"+name+".dea");
+        boolean tmp = Speicher.speichere(this, verzeichnis+"\\"+name+".dea");
         if (tmp) {
             gespeichert = true;
         }

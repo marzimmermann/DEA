@@ -1,3 +1,5 @@
+package application.dea;
+
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import javax.swing.JButton;
@@ -13,6 +15,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
+import java.io.File;
 import java.awt.event.ActionEvent;
 import javax.swing.UIManager;
 
@@ -29,18 +32,22 @@ public class Startseite extends JDialog {
 	private static final long serialVersionUID = 1L;
 	private final JPanel inhaltPanel = new JPanel();
 	private JTextField eingabe;
+	File verzeichnis;
 	private JButton okKnopf;
 	private static JLabel ueberschrift;
+	private boolean gesetztesVerzeichnis = false;
 
 	/**
 	 * Create the dialog.
 	 */
 	public Startseite() {
+		super();
 		setBounds(100, 100, 450, 300);
 		setTitle("DEA_Editor - Verzeichniswahl");
 		setLocationRelativeTo(null); 			// Positioniert Dialog zentral 
 		getContentPane().setLayout(new BorderLayout());
 		inhaltPanel.setForeground(Color.WHITE);
+		setModal(true);
 		inhaltPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
 		getContentPane().add(inhaltPanel, BorderLayout.CENTER);
 		inhaltPanel.setLayout(null);
@@ -50,7 +57,6 @@ public class Startseite extends JDialog {
 		setResizable(false);
 		setDefaultCloseOperation(DO_NOTHING_ON_CLOSE); // siehe erstelleBeendenKnopf  
 		erstelleBeendenKnopf();
-		setVisible(true);
 	}
 
 	private void erstelleUeberschrift() {
@@ -74,13 +80,28 @@ public class Startseite extends JDialog {
 	
 	private void erstelleOKKnopf() {
 		okKnopf = new JButton("OK");
-		okKnopf.setBounds(209, 196, 50, 27);
+		//okKnopf.setBounds(212, 196, 50, 30);
+		okKnopf.setLocation(190, 196);
+		okKnopf.setSize(80, 40);
 		okKnopf.setEnabled(true);
 		okKnopf.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				okKnopf.setEnabled(false); // deaktiviert ok Knopf
-				dispose(); // Dialog zerstört sich bei OK
-			}
+				verzeichnis = new File(eingabe.getText());
+				if(verzeichnis.isDirectory()){
+					gesetztesVerzeichnis = true;
+					dispose();
+				} //TODO Ruecckgabewert
+				else if(!verzeichnis.exists() ) {
+					verzeichnis.mkdirs();
+					gesetztesVerzeichnis = true;
+					dispose();
+				}
+				else {
+					JOptionPane.showMessageDialog(getParent(), "Ungueltiges Verzeichnis. Es existiert eine"
+						+ " Datei mit diesem Namen, aber kein Verzeichnis. Bitte anderes Verzeichnis angeben.",
+						"Fehlerhafte Eingabe",  JOptionPane.ERROR_MESSAGE);
+				}
+			} 
 
 		});
 		inhaltPanel.add(okKnopf);
@@ -107,10 +128,12 @@ public class Startseite extends JDialog {
 	}
 
 	public String getVerzeichnis() {
-		while(okKnopf.isEnabled()) {
-			System.out.print("");
-		}
-		return eingabe.getText();
+		//while(!gesetztesVerzeichnis) {
+			//System.out.print("");
+		//}
+		setVisible(true);
+		return this.verzeichnis.toString();
 
 	}
 }
+

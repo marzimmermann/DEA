@@ -41,12 +41,12 @@ public class Konfiguration implements Serializable {
         return arbeitsverzeichnis;
     }
     
-    /** gibt den Pfad des zuletzt bearbeiteten DEAs zurueck */
+    /** gibt den zuletzt bearbeiteten DEAs zurueck */
     public String getLetzterDea() {
         return letzterDea;
     }
     
-    /** setzt den Pfad des zuletzt bearbeiteten DEAs um */
+    /** setzt den zuletzt bearbeiteten DEAs um */
     public void setLetzterDea(String dea) {
         letzterDea = dea;
     }
