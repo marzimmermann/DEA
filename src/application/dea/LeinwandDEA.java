@@ -103,7 +103,7 @@ public class LeinwandDEA extends JPanel {
 		Point mid = new Point(a.getZustandhuelleTransition(Transition).getX(),
 				a.getZustandhuelleTransition(Transition).getY());
 		//genaue die Mitte der beiden Punkte
-		if(a.getZustandhuelleTransition(Transition).getX() == -1 ){
+		if(mid.getX() == -1 ){
 			mid.setLocation((a.getX()+b.getX())/2, (a.getY()+b.getY()) / 2);
 		}
 		a.getZustandhuelleTransition(Transition).setX((int)mid.getX());
@@ -116,7 +116,7 @@ public class LeinwandDEA extends JPanel {
 		//Berechne und Zeichne zwei Teile des Pfeiles
 		Polygon arrowPart1 = CosinusLinie(p1, p1, mid, angleRad, durchmesser/2, transitionDurchmesser/2);
 		if(arrowPart1.npoints == 0)
-			arrowPart1 = CosinusLinie(p1, mid, p1, angleRad, transitionDurchmesser, durchmesser/2);
+			arrowPart1 = CosinusLinie(p1, mid, p1, angleRad, transitionDurchmesser/2, durchmesser/2);
 		g.drawPolyline(arrowPart1.xpoints, arrowPart1.ypoints, arrowPart1.npoints);
 		Polygon arrowPart2 = CosinusLinie(p1, mid, p2, angleRad, transitionDurchmesser/2, durchmesser/2);
 		if(arrowPart2.npoints == 0)

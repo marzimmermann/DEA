@@ -10,6 +10,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.io.File;
+import java.nio.file.FileSystem;
 import java.awt.Color;
 import java.awt.ComponentOrientation;
 import java.awt.Dimension;
@@ -54,7 +55,6 @@ public class Editor extends JFrame {
 		if(dea == null) { 
 			this.setExtendedState(JFrame.MAXIMIZED_BOTH); 
 			dea = new DEA("");
-			System.out.println("test");
 		}
 		else {
 			if(dea.getName() !=""){
@@ -328,8 +328,11 @@ public class Editor extends JFrame {
 
 	private void erstelleSymbolleiste(){
 		symbolleiste = new JToolBar("Symbolleiste");
+		String fileSeperator = System.getProperty("file.separator");
+		String pfadIcons = "src"+fileSeperator+"data"+
+				fileSeperator+"icons"+fileSeperator;
 		symbolleiste.addSeparator();
-		ImageIcon img  = new ImageIcon("icons\\Backbutton.png");
+		ImageIcon img  = new ImageIcon(pfadIcons+"Backbutton.png");
 		Image i = img.getImage().getScaledInstance(40, 40, java.awt.Image.SCALE_SMOOTH);
 		JButton button = new JButton(new ImageIcon(i));
 		button.setToolTipText("Rueckgaenging");
@@ -343,7 +346,7 @@ public class Editor extends JFrame {
 		});
 		symbolleiste.add(button);
 		symbolleiste.addSeparator();
-		img  = new ImageIcon("icons\\stopbutton.png");
+		img  = new ImageIcon(pfadIcons+"stopbutton.png");
 		i = img.getImage().getScaledInstance(40, 40, java.awt.Image.SCALE_SMOOTH);
 		button = new JButton(new ImageIcon(i));
 		button.setToolTipText("Stop");
@@ -356,7 +359,7 @@ public class Editor extends JFrame {
 		});
 		symbolleiste.add(button);
 		symbolleiste.addSeparator();
-		img  = new ImageIcon("icons\\playbutton.png");
+		img  = new ImageIcon(pfadIcons+"playbutton.png");
 		i = img.getImage().getScaledInstance(40, 40, java.awt.Image.SCALE_SMOOTH);
 		button = new JButton(new ImageIcon(i));
 		button.setToolTipText("Starte");
@@ -369,7 +372,7 @@ public class Editor extends JFrame {
 		});
 		symbolleiste.add(button);
 		symbolleiste.addSeparator();
-		img  = new ImageIcon("icons\\stepplaybutton.png");
+		img  = new ImageIcon(pfadIcons+"stepplaybutton.png");
 		i = img.getImage().getScaledInstance(40, 40, java.awt.Image.SCALE_SMOOTH);
 		button = new JButton(new ImageIcon(i));
 		button.setToolTipText("Step");
@@ -382,7 +385,7 @@ public class Editor extends JFrame {
 		});
 		symbolleiste.add(button);
 		symbolleiste.addSeparator();
-		img  = new ImageIcon("icons\\validatebutton2.png");
+		img  = new ImageIcon(pfadIcons+"validatebutton2.png");
 		i = img.getImage().getScaledInstance(40, 40, java.awt.Image.SCALE_SMOOTH);
 		button = new JButton(new ImageIcon(i));
 		button.setToolTipText("Validiere");
@@ -398,7 +401,7 @@ public class Editor extends JFrame {
 		});
 		symbolleiste.add(button);
 		symbolleiste.addSeparator();
-		img  = new ImageIcon("icons\\minibutton.png");
+		img  = new ImageIcon(pfadIcons+"minibutton.png");
 		i = img.getImage().getScaledInstance(40, 40, java.awt.Image.SCALE_SMOOTH);
 		button = new JButton(new ImageIcon(i));
 		button.setToolTipText("Minimiere");
@@ -422,7 +425,7 @@ public class Editor extends JFrame {
 		});
 		symbolleiste.add(button);
 		symbolleiste.addSeparator();
-		img  = new ImageIcon("icons\\Circle.png");
+		img  = new ImageIcon(pfadIcons+"Circle.png");
 		i = img.getImage().getScaledInstance(40, 40, java.awt.Image.SCALE_SMOOTH);
 		button = new JButton(new ImageIcon(i));
 		button.setToolTipText("Zustand hinzufuegen");
@@ -445,7 +448,7 @@ public class Editor extends JFrame {
 		});
 		symbolleiste.add(button);
 		symbolleiste.addSeparator();
-		img  = new ImageIcon("icons\\DoubleCircle.png");
+		img  = new ImageIcon(pfadIcons+"DoubleCircle.png");
 		i = img.getImage().getScaledInstance(40, 40, java.awt.Image.SCALE_SMOOTH);
 		button = new JButton(new ImageIcon(i));
 		button.setToolTipText("Zustand hinzufuegen");
@@ -468,7 +471,7 @@ public class Editor extends JFrame {
 		});
 		symbolleiste.add(button);
 		symbolleiste.addSeparator();
-		img  = new ImageIcon("icons\\Arrow.png");
+		img  = new ImageIcon(pfadIcons+"Arrow.png");
 		i = img.getImage().getScaledInstance(40, 40, java.awt.Image.SCALE_SMOOTH);
 		button = new JButton(new ImageIcon(i));
 		button.setToolTipText("Transition hinzufuegen");
@@ -483,7 +486,7 @@ public class Editor extends JFrame {
 		});
 		symbolleiste.add(button);
 		symbolleiste.addSeparator();
-		img  = new ImageIcon("icons\\StartArrow.png");
+		img  = new ImageIcon(pfadIcons+"StartArrow.png");
 		i = img.getImage().getScaledInstance(40, 40, java.awt.Image.SCALE_SMOOTH);
 		button = new JButton(new ImageIcon(i));
 		button.setToolTipText("Transition hinzufuegen");
@@ -538,19 +541,6 @@ public class Editor extends JFrame {
 	
 	
 	
-/*	private void erstelleTMp(){
-		dea.fuegeZeichenHinzu('z');
-		dea.fuegeZeichenHinzu('b');
-		dea.fuegeZustandHinzu("Hans", true);
-		dea.setStart("Hans");
-		dea.fuegeZustandHinzu("Greta", false);
-		dea.fuegeTransitionHinzu("Hans", 'z',"Greta");
-		dea.fuegeTransitionHinzu("Greta", 'z',"Hans");
-		dea.fuegeTransitionHinzu("Hans", 'b', "Hans");
-		
-	}
-*/
-	
 	private void createFrame() {
 		setTitle("DEA - Editor");
 		setLocationRelativeTo(null);
@@ -559,7 +549,7 @@ public class Editor extends JFrame {
 		erstelleInhalt();
 		erstelleMenue();
 		erstelleSymbolleiste();
-	//	erstelleTMp();
+
 		inhalt.add(leinwand = new LeinwandDEA(dea));
 		erstelleEingabeLeiste();
 		setVisible(true);
