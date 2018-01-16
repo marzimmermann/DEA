@@ -10,9 +10,11 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.io.File;
+import java.io.IOException;
 import java.nio.file.FileSystem;
 import java.awt.Color;
 import java.awt.ComponentOrientation;
+import java.awt.Desktop;
 import java.awt.Dimension;
 import javax.print.attribute.standard.JobImpressionsCompleted;
 import javax.swing.Box;
@@ -41,6 +43,7 @@ public class Editor extends JFrame {
 	private JToolBar symbolleiste, eingabeLeiste;
 	private LeinwandDEA leinwand;
 	private JTextField eingabe;
+	private String fileSeperator = System.getProperty("file.separator");
 	/**
 	 * Launch the application.
 	 */
@@ -288,7 +291,6 @@ public class Editor extends JFrame {
 			}
 		});
 		reiter.add(item);
-		
 		menue.add(reiter);
 		reiter = new JMenu("Einstellungen");
 		item = new JMenuItem("Konfigurationen anzeigen", KeyEvent.VK_K);
@@ -323,6 +325,36 @@ public class Editor extends JFrame {
 		reiter.add(item);
 		menue.add(reiter);
 		
+		reiter = new JMenu("Hilfe");
+		item = new JMenuItem("Ueber DEAs", KeyEvent.VK_U);
+		item.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				Desktop desktop = Desktop.getDesktop();
+	            if (desktop != null && desktop.isSupported(Desktop.Action.OPEN)) {
+	                try {
+						desktop.open(new File("src"+fileSeperator+"data"+fileSeperator+"Was ist ein DEA.pdf"));
+					} catch (IOException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+	            }
+			}
+		});
+		reiter.add(item);
+		item = new JMenuItem("Programmhinweise", KeyEvent.VK_H);
+		item.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+		});
+		reiter.add(item);
+		
+		menue.add(reiter);
 		setJMenuBar(menue);
 	}
 
