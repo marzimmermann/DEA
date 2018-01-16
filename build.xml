@@ -25,7 +25,7 @@
     <!--muss noch ergaenzt werden-->
     <target name="execute" depends="compile">
         <java classpath="build/classes"
-              classname="application.dea.Hauptklasse"/>
+              classname="application.dea.Hauptklasse" fork="true"/>
     </target>
     
     <target name="execute-dea-minimize-test" depends="compile">
