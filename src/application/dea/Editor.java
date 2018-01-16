@@ -49,10 +49,12 @@ public class Editor extends JFrame {
 	 */
 	public Editor(Konfiguration k) {
 		konfig = k;
-		dea =  (DEA) Speicher.lade(konfig.getLetzterDea());
+		dea = new DEA("");
+		dea = dea.lade(konfig.getArbeitsverzeichnis(), konfig.getLetzterDea());
 		if(dea == null) { 
 			this.setExtendedState(JFrame.MAXIMIZED_BOTH); 
 			dea = new DEA("");
+			System.out.println("test");
 		}
 		else {
 			if(dea.getName() !=""){
@@ -326,7 +328,8 @@ public class Editor extends JFrame {
 
 	private void erstelleSymbolleiste(){
 		symbolleiste = new JToolBar("Symbolleiste");
-		ImageIcon img  = new ImageIcon("\\src\\data\\icons\\Backbutton.png");
+		symbolleiste.addSeparator();
+		ImageIcon img  = new ImageIcon("icons\\Backbutton.png");
 		Image i = img.getImage().getScaledInstance(40, 40, java.awt.Image.SCALE_SMOOTH);
 		JButton button = new JButton(new ImageIcon(i));
 		button.setToolTipText("Rueckgaenging");
@@ -340,7 +343,20 @@ public class Editor extends JFrame {
 		});
 		symbolleiste.add(button);
 		symbolleiste.addSeparator();
-		img  = new ImageIcon("\\src\\data\\icons\\icons\\playbutton.png");
+		img  = new ImageIcon("icons\\stopbutton.png");
+		i = img.getImage().getScaledInstance(40, 40, java.awt.Image.SCALE_SMOOTH);
+		button = new JButton(new ImageIcon(i));
+		button.setToolTipText("Stop");
+		button.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				dea.stoppe();
+			}
+		});
+		symbolleiste.add(button);
+		symbolleiste.addSeparator();
+		img  = new ImageIcon("icons\\playbutton.png");
 		i = img.getImage().getScaledInstance(40, 40, java.awt.Image.SCALE_SMOOTH);
 		button = new JButton(new ImageIcon(i));
 		button.setToolTipText("Starte");
@@ -348,12 +364,12 @@ public class Editor extends JFrame {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				//TODO
+				dea.starte(eingabe.getText());
 			}
 		});
 		symbolleiste.add(button);
 		symbolleiste.addSeparator();
-		img  = new ImageIcon("\\src\\data\\icons\\icons\\stepplaybutton.png");
+		img  = new ImageIcon("icons\\stepplaybutton.png");
 		i = img.getImage().getScaledInstance(40, 40, java.awt.Image.SCALE_SMOOTH);
 		button = new JButton(new ImageIcon(i));
 		button.setToolTipText("Step");
@@ -361,12 +377,12 @@ public class Editor extends JFrame {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				//TODO
+				dea.geheWeiter();
 			}
 		});
 		symbolleiste.add(button);
 		symbolleiste.addSeparator();
-		img  = new ImageIcon("\\src\\data\\icons\\cons\\validatebutton2.png");
+		img  = new ImageIcon("icons\\validatebutton2.png");
 		i = img.getImage().getScaledInstance(40, 40, java.awt.Image.SCALE_SMOOTH);
 		button = new JButton(new ImageIcon(i));
 		button.setToolTipText("Validiere");
@@ -374,12 +390,15 @@ public class Editor extends JFrame {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				//TODO
+				if(!dea.validiere()){
+					JOptionPane.showMessageDialog(null, "Der DEA ist nicht vollstaendig und ist somit  nicht validiert.", 
+							"DEA - Validieren", JOptionPane.WARNING_MESSAGE);
+				}
 			}
 		});
 		symbolleiste.add(button);
 		symbolleiste.addSeparator();
-		img  = new ImageIcon("\\src\\data\\icons\\icons\\minibutton.png");
+		img  = new ImageIcon("icons\\minibutton.png");
 		i = img.getImage().getScaledInstance(40, 40, java.awt.Image.SCALE_SMOOTH);
 		button = new JButton(new ImageIcon(i));
 		button.setToolTipText("Minimiere");
@@ -387,49 +406,92 @@ public class Editor extends JFrame {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				DEA tmp = dea.minimiere();
+				if(tmp != null){
+					dea = tmp;
+					leinwand.repaint();
+				}
+				else{
+					if(dea.istValidiert()){
+                        JOptionPane.showInternalMessageDialog(null, "DEA muss zum minimieren validiert werden",
+                        "DEA minimieren fehlgeschlagen", JOptionPane.ERROR_MESSAGE);
+                    }
+				}
+				
+			}
+		});
+		symbolleiste.add(button);
+		symbolleiste.addSeparator();
+		img  = new ImageIcon("icons\\Circle.png");
+		i = img.getImage().getScaledInstance(40, 40, java.awt.Image.SCALE_SMOOTH);
+		button = new JButton(new ImageIcon(i));
+		button.setToolTipText("Zustand hinzufuegen");
+		button.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				String zName = JOptionPane.showInputDialog(getContentPane(), "Geben Sie einen Namen fuer den Zustand ein:",
+						"Neuer Zustand");
+				if(zName != null){
+					if(dea.fuegeZustandHinzu(zName, false)){
+						leinwand.repaint();
+					}
+					else{
+						JOptionPane.showMessageDialog(getContentPane(), "Hinzufuegen des Zustandes war nicht erfolgreich",
+								"Fehler beim Hinzufuegen", JOptionPane.ERROR_MESSAGE);
+					}
+				}
+			}
+		});
+		symbolleiste.add(button);
+		symbolleiste.addSeparator();
+		img  = new ImageIcon("icons\\DoubleCircle.png");
+		i = img.getImage().getScaledInstance(40, 40, java.awt.Image.SCALE_SMOOTH);
+		button = new JButton(new ImageIcon(i));
+		button.setToolTipText("Zustand hinzufuegen");
+		button.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				String zName = JOptionPane.showInputDialog(getContentPane(), "Geben Sie einen Namen fuer den Zustand ein:",
+						"Neuer Zustand");
+				if(zName != null){
+					if(dea.fuegeZustandHinzu(zName, true)){
+						leinwand.repaint();
+					}
+					else{
+						JOptionPane.showMessageDialog(getContentPane(), "Hinzufuegen des Zustandes war nicht erfolgreich",
+								"Fehler beim Hinzufuegen", JOptionPane.ERROR_MESSAGE);
+					}
+				}
+			}
+		});
+		symbolleiste.add(button);
+		symbolleiste.addSeparator();
+		img  = new ImageIcon("icons\\Arrow.png");
+		i = img.getImage().getScaledInstance(40, 40, java.awt.Image.SCALE_SMOOTH);
+		button = new JButton(new ImageIcon(i));
+		button.setToolTipText("Transition hinzufuegen");
+		button.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				dea.fuegeZeichenHinzu('c');
+				dea.fuegeTransitionHinzu("0", 'c', "1");
+				leinwand.repaint();
+			}
+		});
+		symbolleiste.add(button);
+		symbolleiste.addSeparator();
+		img  = new ImageIcon("icons\\StartArrow.png");
+		i = img.getImage().getScaledInstance(40, 40, java.awt.Image.SCALE_SMOOTH);
+		button = new JButton(new ImageIcon(i));
+		button.setToolTipText("Transition hinzufuegen");
+		button.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
 				//TODO
-			}
-		});
-		symbolleiste.add(button);
-		symbolleiste.addSeparator();
-		img  = new ImageIcon("\\src\\data\\icons\\icons\\Circle.png");
-		i = img.getImage().getScaledInstance(40, 40, java.awt.Image.SCALE_SMOOTH);
-		button = new JButton(new ImageIcon(i));
-		button.setToolTipText("Zustand hinzufuegen");
-		button.addActionListener(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				String zName = JOptionPane.showInputDialog(getContentPane(), "Geben Sie einen Namen fuer den Zustand ein:",
-						"Neuer Zustand");
-				if(dea.fuegeZustandHinzu(zName, false)){
-					leinwand.repaint();
-				}
-				else{
-					JOptionPane.showMessageDialog(getContentPane(), "Hinzufuegen des Zustandes war nicht erfolgreich",
-							"Fehler beim Hinzufuegen", JOptionPane.ERROR_MESSAGE);
-				}
-			}
-		});
-		symbolleiste.add(button);
-		symbolleiste.addSeparator();
-		img  = new ImageIcon("\\src\\data\\icons\\icons\\DoubleCircle.png");
-		i = img.getImage().getScaledInstance(40, 40, java.awt.Image.SCALE_SMOOTH);
-		button = new JButton(new ImageIcon(i));
-		button.setToolTipText("Zustand hinzufuegen");
-		button.addActionListener(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				String zName = JOptionPane.showInputDialog(getContentPane(), "Geben Sie einen Namen fuer den Zustand ein:",
-						"Neuer Zustand");
-				if(dea.fuegeZustandHinzu(zName, true)){
-					leinwand.repaint();
-				}
-				else{
-					JOptionPane.showMessageDialog(getContentPane(), "Hinzufuegen des Zustandes war nicht erfolgreich",
-							"Fehler beim Hinzufuegen", JOptionPane.ERROR_MESSAGE);
-				}
 			}
 		});
 		symbolleiste.add(button);
@@ -466,7 +528,7 @@ public class Editor extends JFrame {
 				JOptionPane.showInputDialog(this, "Ungueltiger Name", "Ungueltiger Name", JOptionPane.ERROR_MESSAGE);
 				continue;
 			}
-			d.setName(deaName);
+			d.setName(deaName );
 		}
 		d.speichere(konfig.getArbeitsverzeichnis());
 		konfig.speichere(getWidth(), getHeight(), d.getName());
@@ -476,7 +538,7 @@ public class Editor extends JFrame {
 	
 	
 	
-	private void erstelleTMp(){
+/*	private void erstelleTMp(){
 		dea.fuegeZeichenHinzu('z');
 		dea.fuegeZeichenHinzu('b');
 		dea.fuegeZustandHinzu("Hans", true);
@@ -487,7 +549,7 @@ public class Editor extends JFrame {
 		dea.fuegeTransitionHinzu("Hans", 'b', "Hans");
 		
 	}
-
+*/
 	
 	private void createFrame() {
 		setTitle("DEA - Editor");
@@ -497,7 +559,7 @@ public class Editor extends JFrame {
 		erstelleInhalt();
 		erstelleMenue();
 		erstelleSymbolleiste();
-		erstelleTMp();
+	//	erstelleTMp();
 		inhalt.add(leinwand = new LeinwandDEA(dea));
 		erstelleEingabeLeiste();
 		setVisible(true);

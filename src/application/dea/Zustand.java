@@ -13,11 +13,11 @@ public abstract class Zustand implements Serializable {
     protected int x  = 0, y = 0;
     
     /*Wrapper*/
-    public class ZustandUmhueller implements Serializable {
+    public class ZustandUmhueller implements Serializable{
     	Zustand z;
-    	int x;
+    	int x = - 1;
     	int y;
-    	public ZustandUmhueller(Zustand s) {
+    	public ZustandUmhueller(Zustand s){
     		z = s;
     	}
 		public int getX() {

@@ -367,6 +367,12 @@ public class DEA implements Serializable {
         return tmp;
     }
     
+    /** speichert den DEA im angegebenen Verzeichnis */
+    public DEA lade(String verzeichnis, String name) {
+        DEA tmp = (DEA) Speicher.lade(verzeichnis+"\\"+name+".dea");
+        return tmp;
+    }
+    
     /*
      * Getter, Setter etc.
      */
@@ -405,7 +411,10 @@ public class DEA implements Serializable {
     
     /** gibt den aktuellen Zustand zurueck */
     public String getAktuellerZustand() {
-        return aktuellerZustand.getName();
+    	if(aktuellerZustand != null){
+    		 return aktuellerZustand.getName();
+    	}
+    	return "";
     }
 
     /** gibt das Alphabet als String zurueck */
