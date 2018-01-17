@@ -1,3 +1,9 @@
+/**
+ * Klasse zum Ausführen der Tests
+ */
+package application.dea;
+
+
 public class Tests {
 	
 	public static void print(String name, String bedeutung, String eingabe, String erwartet, String ausgabe){
@@ -26,7 +32,7 @@ public class Tests {
 		print("Konfiguration testen", "Test, ob man beim Laden die eben gespeicherte Konfiguration erhaelt", "test123,30L,10,20,testdea", "test123,30L,10,20,testdea", ausgabe);
 	}
 	
-	public static test2(){
+	public static void test2(){
 		DEA dea = new DEA("meinDea");
 		dea.fuegeZustandHinzu(false);
 		dea.fuegeZustandHinzu(true);
@@ -46,7 +52,7 @@ public class Tests {
 		print("DEA validieren", "Methode validieren mit korrekten und falschen DEAs testen", "(DEA)", "false,true,false", ausgabe);
 	}
 	
-	public static test3(){
+	public static void test3(){
 		DEA dea = new DEA("großDEA");
 		dea.fuegeZustandHinzu(false);
 		dea.fuegeZustandHinzu(false);

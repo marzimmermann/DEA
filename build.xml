@@ -28,6 +28,11 @@
               classname="application.dea.Hauptklasse" fork="true"/>
     </target>
     
+    <target name="execute-tests" depends="compile">
+        <java classpath="build/classes"
+              classname="application.dea.Tests"/>
+    </target>
+    
     <target name="execute-dea-minimize-test" depends="compile">
         <java classpath="build/classes"
               classname="application.dea.DEA"/>
