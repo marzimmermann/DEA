@@ -50,7 +50,7 @@ public class DEA implements Serializable {
     }
     
     /** geht in den naechsten Zustand ueber */
-    public void geheWeiter() { // entspricht bisher wohl stepByStep()
+    public void geheWeiter() {
         if (!gesperrt) {
             return;
         }
@@ -132,7 +132,7 @@ public class DEA implements Serializable {
     
     /** fuegt eine neue Transition hinzu */
     public boolean fuegeTransitionHinzu(String von, char ueber, String nach) {
-        if (!istImAlphabet(ueber)) {
+        if (!istImAlphabet(ueber) || !zustaende.containsKey(von) || !zustaende.containsKey(nach)) {
             return false;
         }
         gespeichert = false;
@@ -152,17 +152,16 @@ public class DEA implements Serializable {
     /** fuegt dem Alphabet alle gueltigen Zeichen im uebergebenen String hinzu */
     public void fuegeZeichenHinzu(String zeichen) {
         for (char c : zeichen.toCharArray()) {
-            if (c == ' ') {
-                continue; // Leerzeichen werden ignoriert
-            }
             fuegeZeichenHinzu(c);
         }
     }
     
     /** erweitert das Alphabet um ein Zeichen */
     public void fuegeZeichenHinzu(char c) {
-        gespeichert = false;
-        alphabet.add(c);
+        if (c != ' ') { // Leerzeichen werden ignoriert
+            gespeichert = false;
+            alphabet.add(c);
+        }
     }
     
     /** loescht alle im uebergebenen String enthaltenen Zeichen aus dem Alphabet */
@@ -197,6 +196,7 @@ public class DEA implements Serializable {
             int merke = z.zaehleTransitionen();
             anzTransitionen += merke;
             if (merke != this.alphabet.size()) {
+                validiert = false;
                 if (this.alphabet.size()-merke == 1) {
                     return "Es fehlt eine Transition vom Zustand " + z.getName();
                 } else {
@@ -206,7 +206,7 @@ public class DEA implements Serializable {
         }
         validiert = (anzTransitionen == zustaende.size()*alphabet.size());
         if (!validiert) {
-            return "";
+            return "Es fehlen Transitionen";
         }
         return "";
     }
@@ -424,6 +424,9 @@ public class DEA implements Serializable {
     
     /** setzt den Startzustand */
     public void setStart(String zustand) {
+        if (!zustaende.containsKey(zustand)) {
+            return;
+        }
         gespeichert = false;
         start = zustaende.get(zustand);
         aktuellerZustand = start;
@@ -441,10 +444,10 @@ public class DEA implements Serializable {
     
     /** gibt den aktuellen Zustand zurueck */
     public String getAktuellerZustand() {
-    	if(aktuellerZustand != null){
-    		 return aktuellerZustand.getName();
-    	}
-    	return "";
+        if(aktuellerZustand != null){
+            return aktuellerZustand.getName();
+        }
+        return "";
     }
 
     /** gibt das Alphabet als String zurueck */
@@ -480,6 +483,21 @@ public class DEA implements Serializable {
     /** gibt eine iterierbare Darstellung aller Zustandsobjekte zurueck */
     public Iterable<Zustand> getZustaende() {
         return zustaende.values();
+    }
+    
+    /** zeigt alle im DEA enthaltenen Zustaende und Transitionen an */
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("DEA " + this.getName() + ":\n");
+        for (Zustand z : this.getZustaende()) {
+            sb.append("  " + z.getName()+" (" + z.istAkzeptierend() + "):\n");
+            for (char c : this.alphabet) {
+                if (z.getTransition(c) != null) {
+                    sb.append("     " + c + " -> " + z.getTransition(c).getName() + "\n");
+                }
+            }
+        }
+        return sb.toString();
     }
     
     /** Main-Methode zum Testen */
@@ -525,11 +543,7 @@ public class DEA implements Serializable {
         d.validiere();
         d = d.minimiere();
         
-        for (Zustand z : d.getZustaende()) {
-            System.out.println(z.getName()+" (" + z.istAkzeptierend() + "):");
-            System.out.println("     0 -> " + z.getTransition('0').getName());
-            System.out.println("     1 -> " + z.getTransition('1').getName());
-        }
+        System.out.println(d);
         
         DEA f = d;
         
@@ -568,34 +582,18 @@ public class DEA implements Serializable {
         d = d.minimiere();
         d = new DEA(d);
         
-        for (Zustand z : d.getZustaende()) {
-            System.out.println(z.getName()+" (" + z.istAkzeptierend() + "):");
-            System.out.println("     0 -> " + z.getTransition('0').getName());
-            System.out.println("     1 -> " + z.getTransition('1').getName());
-        }
+        System.out.println(d);
         
         System.out.println("\n\nDritter Test\n");
         
         d.importiere(f);
-        for (Zustand z : d.getZustaende()) {
-            System.out.println(z.getName()+" (" + z.istAkzeptierend() + "):");
-            System.out.println("     0 -> " + z.getTransition('0').getName());
-            System.out.println("     1 -> " + z.getTransition('1').getName());
-        }
+        System.out.println(d);
         
         Speicher.merke(d);
         
-        System.out.println("\n\nDritter Test\n");
+        System.out.println("\n\nVierter Test\n");
         d = Speicher.nimmAenderungZurueck();
-        for (Zustand z : d.getZustaende()) {
-            System.out.println(z.getName()+" (" + z.istAkzeptierend() + "):");
-            if (z.getTransition('0') != null) {
-                System.out.println("     0 -> " + z.getTransition('0').getName());
-            }
-            if (z.getTransition('1') != null) {
-                System.out.println("     1 -> " + z.getTransition('1').getName());
-            }
-        }
+        System.out.println(d);
         
         }
 }
