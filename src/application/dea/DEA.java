@@ -131,12 +131,13 @@ public class DEA implements Serializable {
     }
     
     /** fuegt eine neue Transition hinzu */
-    public void fuegeTransitionHinzu(String von, char ueber, String nach) {
+    public boolean fuegeTransitionHinzu(String von, char ueber, String nach) {
         if (!istImAlphabet(ueber)) {
-            return;
+            return false;
         }
         gespeichert = false;
         zustaende.get(von).fuegeTransitionHinzu(ueber, zustaende.get(nach));
+        return true;
     }
     
     /** loescht eine bestehende Transition */

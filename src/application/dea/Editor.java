@@ -526,9 +526,23 @@ public class Editor extends JFrame {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				dea.fuegeZeichenHinzu('c');
-				dea.fuegeTransitionHinzu("0", 'c', "1");
-				leinwand.repaint();
+				JTextField von = new JTextField();
+				JTextField ueber = new JTextField(1);
+				JTextField zu = new JTextField();
+				Object[] message = {
+				    " Von : ", von,
+				    " Ueber : ", ueber,
+				    " Zu : ", zu,
+				};
+				int option = JOptionPane.showConfirmDialog(null, message, "Transition hinzufuegen", JOptionPane.OK_CANCEL_OPTION);
+				if (option == JOptionPane.OK_OPTION) {
+				    if (!dea.fuegeTransitionHinzu(von.getText(),
+				    		ueber.getText().charAt(0), zu.getText())) {
+				    	JOptionPane.showMessageDialog(null, 
+				    			"Hinzufuegen der Transition war nicht erfolgreich",
+				    			"Fehler", JOptionPane.WARNING_MESSAGE);
+				    }
+				}
 			}
 		});
 		symbolleiste.add(button);
