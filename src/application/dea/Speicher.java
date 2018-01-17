@@ -12,8 +12,11 @@ import java.io.FileInputStream;
 import java.io.Serializable;
 import java.io.IOException;
 import java.io.FileNotFoundException;
+import java.util.LinkedList;
 
 public class Speicher {
+    public static LinkedList<DEA> aenderungen = new LinkedList<>();
+
     /** speichert ein uebergebenes Serializable unter dem angegebenen Dateinamen */
     public static boolean speichere(Serializable obj, String pfad) {
         try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(pfad))) {
@@ -49,5 +52,19 @@ public class Speicher {
     /** prueft, ob der angegebene Pfad eine Datei ist */
     public static boolean existiertDatei(String pfad) {
         return new File(pfad).isFile();
+    }
+    
+    /** fuegt den uebergebenen DEA in die Aenderungsliste hinzu */
+    public static void merke(DEA dea) {
+        aenderungen.add(new DEA(dea));
+        if (aenderungen.size() > 15) {
+            aenderungen.removeFirst();
+        }
+    }
+    
+    /** gibt den DEA vor der letzten Aenderung zurueck */
+    public static DEA nimmAenderungZurueck() {
+        aenderungen.removeLast();
+        return new DEA(aenderungen.getLast());
     }
 }

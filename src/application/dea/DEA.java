@@ -328,7 +328,9 @@ public class DEA implements Serializable {
         this.gespeichert = dea.gespeichert;
         this.zustandId = dea.zustandId;
         this.zeichenIndex = dea.zeichenIndex;
-        this.start = this.zustaende.get(dea.start.getName());
+        if (dea.start != null) {
+            this.start = this.zustaende.get(dea.start.getName());
+        }
     }
     
     /** importiert den uebergebenen DEA in den aktuellen hinein */
@@ -493,15 +495,18 @@ public class DEA implements Serializable {
         d.fuegeZustandHinzu("A", false);
         d.fuegeZustandHinzu("B", false);
         d.fuegeZustandHinzu("C", true);
+        Speicher.merke(d);
         d.fuegeZustandHinzu("D", false);
         d.fuegeZustandHinzu("E", false);
         d.fuegeZustandHinzu("F", false);
         d.fuegeZustandHinzu("G", false);
         d.fuegeZustandHinzu("H", false);
         
+        Speicher.merke(d);
         d.fuegeTransitionHinzu("A", '0', "B");
         d.fuegeTransitionHinzu("A", '1', "F");
         d.fuegeTransitionHinzu("B", '0', "G");
+        Speicher.merke(d);
         d.fuegeTransitionHinzu("B", '1', "C");
         d.fuegeTransitionHinzu("C", '0', "A");
         d.fuegeTransitionHinzu("C", '1', "C");
@@ -576,6 +581,20 @@ public class DEA implements Serializable {
             System.out.println(z.getName()+" (" + z.istAkzeptierend() + "):");
             System.out.println("     0 -> " + z.getTransition('0').getName());
             System.out.println("     1 -> " + z.getTransition('1').getName());
+        }
+        
+        Speicher.merke(d);
+        
+        System.out.println("\n\nDritter Test\n");
+        d = Speicher.nimmAenderungZurueck();
+        for (Zustand z : d.getZustaende()) {
+            System.out.println(z.getName()+" (" + z.istAkzeptierend() + "):");
+            if (z.getTransition('0') != null) {
+                System.out.println("     0 -> " + z.getTransition('0').getName());
+            }
+            if (z.getTransition('1') != null) {
+                System.out.println("     1 -> " + z.getTransition('1').getName());
+            }
         }
         
         }

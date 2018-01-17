@@ -71,7 +71,11 @@ public abstract class Zustand implements Serializable {
     
     /** gibt den ueber eine Transition erreichten Zustand zurueck */
     public Zustand getTransition(char c) {
-        return transitionen.get(c).getZustand();
+        ZustandUmhueller tmp = transitionen.get(c);
+        if (tmp == null) {
+            return null;
+        }
+        return tmp.getZustand();
     }
     
     /** gibt den ueber eine Transition erreichten Zustand zurueck */
