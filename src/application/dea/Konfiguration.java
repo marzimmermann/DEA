@@ -13,6 +13,7 @@ import java.io.Serializable;
 public class Konfiguration implements Serializable {
     private String arbeitsverzeichnis, letzterDea;
     private int x, y;
+    private long dauer;
     public static final String dateiname = ".dea_editor.konfiguration";
     
     /** speichert die Konfiguration mit der Fenstergroesse x, y */
@@ -60,6 +61,17 @@ public class Konfiguration implements Serializable {
     public int getY() {
         return y;
     }
+    
+    /** gibt die Zustandsuebergangsdauer zurueck */
+    public long getDauer() {
+        return dauer;
+    }
+    
+    /** setzt die Zustandsuebergangsdauer */
+    public void setDauer(long dauer) {
+        this.dauer = dauer;
+    }
+    
      /** setzt das Arbeitsverzeichnis um */
     public void setArbeitsverzeichnis(String arbeitsverzeichnis) {
         this.arbeitsverzeichnis = arbeitsverzeichnis;

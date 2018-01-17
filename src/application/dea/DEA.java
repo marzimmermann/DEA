@@ -163,6 +163,13 @@ public class DEA implements Serializable {
         alphabet.add(c);
     }
     
+    /** loescht alle im uebergebenen String enthaltenen Zeichen aus dem Alphabet */
+    public void loescheZeichen(String zeichen) {
+        for (char c : zeichen.toCharArray()) {
+            loescheZeichen(c);
+        }
+    }
+    
     /** loescht ein Zeichen aus dem Alphabet (und alle damit verbundenen Transitionen) */
     public void loescheZeichen(char c) {
         gespeichert = false;
@@ -332,6 +339,8 @@ public class DEA implements Serializable {
             }
             umbenennungen.put(s, neuerName);
             this.fuegeZustandHinzu(neuerName, dea.zustaende.get(s).istAkzeptierend());
+            this.zustaende.get(neuerName).setX(dea.zustaende.get(s).getX());
+            this.zustaende.get(neuerName).setY(dea.zustaende.get(s).getY());
         }
         // Transitionen uebernehmen
         for (String s : dea.zustaende.keySet()) {
