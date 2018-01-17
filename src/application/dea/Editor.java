@@ -5,6 +5,7 @@ import java.awt.Canvas;
 import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
@@ -30,6 +31,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.JToolBar;
+import javax.swing.KeyStroke;
 import javax.swing.border.EmptyBorder;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.Image;
@@ -232,6 +234,9 @@ public class Editor extends JFrame {
 		});
 		reiter.add(item);
 		item = new JMenuItem("Speichern", KeyEvent.VK_S);
+		item.setAccelerator(
+				KeyStroke.getKeyStroke( 'S', InputEvent.CTRL_DOWN_MASK )
+		);
 		item.addActionListener(new ActionListener() {
 
 			@Override
@@ -353,7 +358,16 @@ public class Editor extends JFrame {
 			}
 		});
 		reiter.add(item);
-		
+		item = new JMenuItem("Impressum", KeyEvent.VK_I);
+		item.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				String impressum = "TODO: Impressum";
+				JOptionPane.showMessageDialog(null, impressum, "Impressum", JOptionPane.INFORMATION_MESSAGE);
+			}
+		});
+		reiter.add(item);
 		menue.add(reiter);
 		setJMenuBar(menue);
 	}
