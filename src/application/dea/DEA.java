@@ -40,6 +40,7 @@ public class DEA implements Serializable {
     
     /** startet den DEA mit einer neuen Eingabe */
     public void starte(String eingabe) {
+        this.validiere();
         if (!validiert || gesperrt || !setEingabe(eingabe)) {
             return;
         }
@@ -184,17 +185,29 @@ public class DEA implements Serializable {
      */
     
     /** prueft, ob es sich um einen gueltigen DEA handelt */
-    public boolean validiere() {
+    public String validiere() {
+        gespeichert = false;
         if (start == null || !zustaende.containsValue(start)) {
-            return validiert = false;
+            validiert = false;
+            return "Startzustand fehlt";
         }
         int anzTransitionen = 0;
         for (Zustand z : zustaende.values()) {
-            anzTransitionen += z.zaehleTransitionen();
+            int merke = z.zaehleTransitionen();
+            anzTransitionen += merke;
+            if (merke != this.alphabet.size()) {
+                if (this.alphabet.size()-merke == 1) {
+                    return "Es fehlt eine Transition vom Zustand " + z.getName();
+                } else {
+                    return "Es fehlen " + (this.alphabet.size()-merke) + " Transitionen vom Zustand " + z.getName();
+                }
+            }
         }
         validiert = (anzTransitionen == zustaende.size()*alphabet.size());
-        gespeichert = false;
-        return validiert;
+        if (!validiert) {
+            return "";
+        }
+        return "";
     }
     
     /** gibt sich selbst als minimalen DEA zurueck */
@@ -204,7 +217,8 @@ public class DEA implements Serializable {
          * ist noch nicht ausreichend getestet
          * und auch nicht schoen implementiert
          */
-    
+        
+        this.validiere();
         if (istGesperrt() || !istValidiert()) {
             return null;
         }
@@ -531,13 +545,16 @@ public class DEA implements Serializable {
         d.fuegeTransitionHinzu("3", '1', "4");
         d.fuegeTransitionHinzu("4", '0', "5");
         d.fuegeTransitionHinzu("4", '1', "6");
+        System.out.println(d.validiere());
+        d.setStart("0");
+        System.out.println(d.validiere());
         d.fuegeTransitionHinzu("5", '0', "5");
         d.fuegeTransitionHinzu("5", '1', "5");
         d.fuegeTransitionHinzu("6", '0', "6");
         d.fuegeTransitionHinzu("6", '1', "6");
         
-        d.setStart("0");
-        d.validiere();
+        
+        System.out.println(d.validiere());
         d = d.minimiere();
         d = new DEA(d);
         

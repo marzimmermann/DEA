@@ -439,7 +439,8 @@ public class Editor extends JFrame {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				if(!dea.validiere()){
+				dea.validiere();
+				if(!dea.istValidiert()){
 					JOptionPane.showMessageDialog(null, "Der DEA ist nicht vollstaendig und ist somit  nicht validiert.", 
 							"DEA - Validieren", JOptionPane.WARNING_MESSAGE);
 				}

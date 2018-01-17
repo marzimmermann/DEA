@@ -32,6 +32,7 @@ public class Konfiguration implements Serializable {
         }
         this.arbeitsverzeichnis = tmp.arbeitsverzeichnis;
         this.letzterDea = tmp.letzterDea;
+        this.dauer = tmp.dauer;
         this.x = tmp.x;
         this.y = tmp.y;
         return true;
