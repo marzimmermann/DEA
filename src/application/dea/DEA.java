@@ -363,6 +363,10 @@ public class DEA implements Serializable {
                 Zustand nach = dea.zustaende.get(s).getTransition(ueber);
                 if (nach != null) {
                     this.fuegeTransitionHinzu(umbenennungen.get(s), ueber, umbenennungen.get(nach.getName()));
+                    Zustand.ZustandUmhueller zu_alt = dea.zustaende.get(s).getTransitionen().get(ueber);
+                    Zustand.ZustandUmhueller zu_neu = this.zustaende.get(s).getTransitionen().get(ueber);
+                    zu_neu.setX(zu_alt.getX());
+                    zu_neu.setY(zu_alt.getY());
                 }
             }
         }
@@ -574,6 +578,5 @@ public class DEA implements Serializable {
             System.out.println("     1 -> " + z.getTransition('1').getName());
         }
         
-
         }
 }
