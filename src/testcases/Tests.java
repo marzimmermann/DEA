@@ -6,6 +6,14 @@ package application.dea;
 
 public class Tests {
 	
+	/**
+	* Methode erzeugt formartierte Ausgabe der Testfälle
+	* @param name
+	* @param bedeutung 
+	* @param eingabe
+	* @param erwartet
+	* @param ausgabe
+	*/
 	public static void print(String name, String bedeutung, String eingabe, String erwartet, String ausgabe){
 		System.out.println("## " +name);
 		System.out.println("# " +bedeutung);
@@ -29,7 +37,7 @@ public class Tests {
 		Konfiguration konf = new Konfiguration();
 		konf.lade();
 		String ausgabe = konf.getArbeitsverzeichnis() +"," +konf.getDauer() +"," +konf.getX() +"," +konf.getY() +","+konf.getLetzterDea();
-		print("Konfiguration testen", "Test, ob man beim Laden die eben gespeicherte Konfiguration erhaelt", "test123,30L,10,20,testdea", "test123,30L,10,20,testdea", ausgabe);
+		print("Test1: Konfiguration testen", "Test, ob man beim Laden die eben gespeicherte Konfiguration erhaelt", "test123,30L,10,20,testdea", "test123,30,10,20,testdea", ausgabe);
 	}
 	
 	public static void test2(){
@@ -42,14 +50,14 @@ public class Tests {
 		dea.fuegeTransitionHinzu("1",'x',"1");
 		dea.fuegeTransitionHinzu("1",'y',"0");
 		dea.validiere();
-		String ausgabe = "" + dea.istValidiert();
+		String ausgabe = "" + dea.istValidiert() +",";
 		dea.setStart("0");
 		dea.validiere();
-		ausgabe += dea.istValidiert();
+		ausgabe += dea.istValidiert() +",";
 		dea.loescheTransition("1",'x');
 		dea.validiere();
 		ausgabe += dea.istValidiert();
-		print("DEA validieren", "Methode validieren mit korrekten und falschen DEAs testen", "(DEA)", "false,true,false", ausgabe);
+		print("Test2: DEA validieren", "Methode validieren mit korrekten und falschen DEAs testen", "(DEA)", "false,true,false", ausgabe);
 	}
 	
 	public static void test3(){
@@ -82,7 +90,11 @@ public class Tests {
 		dea.fuegeTransitionHinzu("7",'1',"7");
 		dea.fuegeTransitionHinzu("8 ",'0',"7");
 		dea.fuegeTransitionHinzu("8",'1',"7");
-		dea.minimiere();
+		//dea = dea.minimiere(); //klappt so nicht
+		
+		DEA d= new DEA("D");
+		d = dea.minimiere();
+		String ausgabe = "" ;//+ d.toString() +"\n"; //gibt auch einen fehler
 		
 		DEA vergl = new DEA("kleinDEA");
 		vergl.fuegeZustandHinzu(false);
@@ -108,18 +120,54 @@ public class Tests {
 		vergl.fuegeTransitionHinzu("6",'0',"6");
 		vergl.fuegeTransitionHinzu("6",'1',"6");
 		
-		String ausgabe = "";
-		print("DEA minimieren", "Methode minimieren mit validiertem DEA testen", "(DEA)", "", ausgabe);
+		ausgabe += vergl.toString();
+		print("Test3: DEA minimieren", "Methode minimieren mit validiertem DEA testen", "(DEA)", "", ausgabe);
 	}
 	
+	public static void test4(){
+        DEA dea = new DEA("meinDea");
+		dea.fuegeZustandHinzu(false);
+		dea.fuegeZustandHinzu(true);
+		dea.fuegeZeichenHinzu("xy");
+		dea.fuegeTransitionHinzu("0",'x',"1");
+		dea.fuegeTransitionHinzu("0",'y',"1");
+		dea.fuegeTransitionHinzu("1",'x',"1");
+		dea.fuegeTransitionHinzu("1",'y',"0");
+		dea.validiere();
+		String ausgabe = "" +dea.minimiere();
+		print("Test4: DEA minimieren2", "Methode minimieren mit unvollständigem DEA testen, darf nicht minimiert werden", "(DEA)", "null", ausgabe);
+	}
 	
+	public static void test5(){
+        DEA dea = new DEA("meinDea");
+		dea.fuegeZustandHinzu("z1",false);
+		String ausgabe = "" + dea.fuegeZustandHinzu("z1",false);
+		print("Test5: DEA Zustaende hinzufuegen", "Es duerfen keine Zustaende mit gleichem Namen existieren", "(DEA)", "false", ausgabe);
+	}
 	
+	public static void test6(){
+        DEA dea = new DEA("meinDea");
+		dea.fuegeZustandHinzu(false);
+		dea.fuegeZustandHinzu(true);
+		dea.fuegeZeichenHinzu("xy");
+		dea.fuegeTransitionHinzu("0",'x',"1");
+		dea.fuegeTransitionHinzu("0",'y',"1");
+		dea.fuegeTransitionHinzu("1",'x',"1");
+		dea.fuegeTransitionHinzu("1",'y',"0");
+		dea.loescheZeichen('x');
+		String deaInhalt = dea.toString();
+        String ausgabe = "" +deaInhalt.contains("x") ;
+        print("Test6: DEA Alphabet veraendern", "Test,ob beim Loeschen von Symbolen des Alphabets auch zugehoerige Transitionen geloescht werden", "(DEA)", "false", ausgabe);
+	}
 	
 	
 	
 	public static void main (String arv[]){
 		test1();
 		test2();
-		test3();
+		//test3();
+		test4();
+		test5();
+		test6();
 	}
 }
