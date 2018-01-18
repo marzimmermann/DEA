@@ -18,7 +18,7 @@ public class DEA implements Serializable {
     private int zeichenIndex; // Position des zu lesenden Zeichens waehrend einer Ausfuehrung
     private HashSet<Character> alphabet = new HashSet<>();
     private HashMap<String, Zustand> zustaende = new HashMap<>();
-    private Zustand start, aktuellerZustand = start;
+    private Zustand start, aktuellerZustand ;
     private String fileSeperator = System.getProperty("file.separator");
     
     /*
@@ -440,13 +440,14 @@ public class DEA implements Serializable {
     }
     
     /** setzt den Startzustand */
-    public void setStart(String zustand) {
+    public boolean setStart(String zustand) {
         if (!zustaende.containsKey(zustand)) {
-            return;
+            return false;
         }
         gespeichert = false;
         start = zustaende.get(zustand);
         aktuellerZustand = start;
+        return true;
     }
     
     /** gibt den Startzustand zurueck */
@@ -477,9 +478,9 @@ public class DEA implements Serializable {
 
     /** gibt das Alphabet als String zurueck */
     public String getAlphabet() {
-        StringBuilder tmp = new StringBuilder(alphabet.size());
+        StringBuilder tmp = new StringBuilder(alphabet.size()*2);
         for (Character c : alphabet) {
-            tmp.append(c.charValue());
+            tmp.append(c.charValue()+" ");
         }
         return tmp.toString();
     }

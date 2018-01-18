@@ -18,8 +18,10 @@ import java.awt.ComponentOrientation;
 import java.awt.Desktop;
 import java.awt.Dimension;
 import javax.print.attribute.standard.JobImpressionsCompleted;
+import javax.swing.Action;
 import javax.swing.Box;
 import javax.swing.ImageIcon;
+import javax.swing.InputMap;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
@@ -268,6 +270,9 @@ public class Editor extends JFrame {
 		});
 		reiter.add(item);
 		item = new JMenuItem("Beenden", KeyEvent.VK_B);
+		item.setAccelerator(
+				KeyStroke.getKeyStroke( 'B', InputEvent.CTRL_DOWN_MASK )
+		);
 		item.addActionListener(new ActionListener() {
 
 			@Override
@@ -423,11 +428,13 @@ public class Editor extends JFrame {
 		ImageIcon img  = new ImageIcon(pfadIcons+"Backbutton.png");
 		Image i = img.getImage().getScaledInstance(40, 40, java.awt.Image.SCALE_SMOOTH);
 		JButton button = new JButton(new ImageIcon(i));
+		
 		button.setToolTipText("Rueckgaenging");
 		button.addActionListener(new ActionListener() {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				System.out.println("Test");
 				dea = Speicher.nimmAenderungZurueck();
 				leinwand.repaint();
 			}
@@ -493,7 +500,7 @@ public class Editor extends JFrame {
 						e1.printStackTrace();
 					}
 					dea.geheWeiter();
-					leinwand.repaint();
+					leinwand.update(leinwand.getGraphics());
 				}
 			}
 		});
@@ -507,7 +514,38 @@ public class Editor extends JFrame {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				dea.geheWeiter();
+				if(dea.istGesperrt()) {
+					dea.geheWeiter();
+					leinwand.repaint();
+				}
+				else {
+					if(!dea.starte(eingabe.getText())) {
+						if(!dea.istValidiert()) {
+							JOptionPane.showMessageDialog(null,
+									"Der DEA muss zum Starten zunaechst validiert werden",
+									"DEA Starten fehlgeschlagen", JOptionPane.WARNING_MESSAGE);
+							return;
+						}
+						else if(!dea.istGueltigeEingabe(eingabe.getText())) {
+							JOptionPane.showMessageDialog(null,
+									"Die Eingabe ist nicht gueltig!",
+									"DEA Starten fehlgeschlagen", JOptionPane.WARNING_MESSAGE);
+							return;
+						}
+						else if(!dea.istGesperrt()) {
+							JOptionPane.showMessageDialog(null,
+									"Der DEA wurde bereits gestartet",
+									"DEA Starten fehlgeschlagen", JOptionPane.WARNING_MESSAGE);
+							return;
+						}
+						else {
+							JOptionPane.showMessageDialog(null,
+									"Das Starten des DEAs ist fehgeschlagen.",
+									"DEA Starten fehlgeschlagen", JOptionPane.ERROR_MESSAGE);
+							return;
+						}
+					}
+				}
 			}
 		});
 		symbolleiste.add(button);
@@ -520,9 +558,9 @@ public class Editor extends JFrame {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				dea.validiere();
-				if(!dea.istValidiert()){
-					JOptionPane.showMessageDialog(null, "Der DEA ist nicht vollstaendig und ist somit  nicht validiert.", 
+				String fehler = dea.validiere();
+				if(!fehler.equals("")){
+					JOptionPane.showMessageDialog(null, fehler, 
 							"DEA - Validieren", JOptionPane.WARNING_MESSAGE);
 				}
 			}
@@ -540,10 +578,11 @@ public class Editor extends JFrame {
 				DEA tmp = dea.minimiere();
 				if(tmp != null){
 					dea = tmp;
+					Speicher.merke(dea);
 					leinwand.repaint();
 				}
 				else{
-					if(dea.istValidiert()){
+					if(!dea.istValidiert()){
                         JOptionPane.showInternalMessageDialog(null, "DEA muss zum minimieren validiert werden",
                         "DEA minimieren fehlgeschlagen", JOptionPane.ERROR_MESSAGE);
                     }
@@ -565,6 +604,7 @@ public class Editor extends JFrame {
 						"Neuer Zustand");
 				if(zName != null){
 					if(dea.fuegeZustandHinzu(zName, false)){
+						Speicher.merke(dea);
 						leinwand.repaint();
 					}
 					else{
@@ -588,6 +628,7 @@ public class Editor extends JFrame {
 						"Neuer Zustand");
 				if(zName != null){
 					if(dea.fuegeZustandHinzu(zName, true)){
+						Speicher.merke(dea);
 						leinwand.repaint();
 					}
 					else{
@@ -624,6 +665,7 @@ public class Editor extends JFrame {
 				    			"Fehler", JOptionPane.WARNING_MESSAGE);
 				    }
 				    else {
+				    	Speicher.merke(dea);
 				    	leinwand.repaint();
 				    }
 				}
@@ -639,7 +681,14 @@ public class Editor extends JFrame {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				//TODO
+				String start = JOptionPane.showInputDialog(null, 
+						"Startzustand eingeben", "Start waehlen", JOptionPane.QUESTION_MESSAGE);
+				if(!dea.setStart(start)) {
+					JOptionPane.showMessageDialog(null, "Kein Gueltiger Zustand", 
+							"Startzustand waehlen fehlgeschlagen", JOptionPane.ERROR_MESSAGE);
+					return;
+				}
+				leinwand.repaint();
 			}
 		});
 		symbolleiste.add(button);
@@ -652,7 +701,8 @@ public class Editor extends JFrame {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				//TODO
+				JOptionPane.showMessageDialog(null, dea.getAlphabet(),
+						"Alphabet anzeigen",JOptionPane.INFORMATION_MESSAGE);		
 			}
 		});
 		symbolleiste.add(button);
@@ -665,7 +715,9 @@ public class Editor extends JFrame {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				//TODO
+				dea.fuegeZeichenHinzu(JOptionPane.showInputDialog(null, 
+						"Zeichen zum Alphabet hinzufuegen", 
+						"Alphabet erweitern", JOptionPane.PLAIN_MESSAGE));
 			}
 		});
 		symbolleiste.add(button);
@@ -680,12 +732,13 @@ public class Editor extends JFrame {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				//TODO
+				dea.loescheZeichen(JOptionPane.showInputDialog(null, 
+						"Zeichen aus dem Alphabet entfernen", "Alphabet verringern",
+						JOptionPane.PLAIN_MESSAGE));
 			}
 		});
 		symbolleiste.add(button);
 		symbolleiste.addSeparator();
-		
 		
 		inhalt.add(symbolleiste, BorderLayout.PAGE_START);
 	}
