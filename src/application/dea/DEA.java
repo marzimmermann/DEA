@@ -55,10 +55,11 @@ public class DEA implements Serializable {
         if (!gesperrt) {
             return;
         }
-        aktuellerZustand = aktuellerZustand.getTransition(liesZeichen());
         if (istFertig()) {
             stoppe();
+            return;
         }
+        aktuellerZustand = aktuellerZustand.getTransition(liesZeichen());
     }
     
     /** stoppt die aktuelle Ausfuehrung des Automaten */
