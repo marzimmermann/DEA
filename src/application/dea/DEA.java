@@ -40,14 +40,15 @@ public class DEA implements Serializable {
      */
     
     /** startet den DEA mit einer neuen Eingabe */
-    public void starte(String eingabe) {
+    public boolean starte(String eingabe) {
         this.validiere();
         if (!validiert || gesperrt || !setEingabe(eingabe)) {
-            return;
+            return false;
         }
         zeichenIndex = 0;
         aktuellerZustand = start;
         gesperrt = true;
+        return true;
     }
     
     /** geht in den naechsten Zustand ueber */

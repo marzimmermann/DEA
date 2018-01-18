@@ -64,7 +64,16 @@ public class Speicher {
     
     /** gibt den DEA vor der letzten Aenderung zurueck */
     public static DEA nimmAenderungZurueck() {
-        aenderungen.removeLast();
+    	if(aenderungen.size() >= 2) {
+    		aenderungen.removeLast();
+            return new DEA(aenderungen.getLast());
+    	}
         return new DEA(aenderungen.getLast());
     }
+    
+    /** leert die Liste, wenn ein neuer DEA geladen wird */
+    public static void leereMerkeListe() {
+        aenderungen.removeAll(aenderungen);
+    }
+    
 }

@@ -67,6 +67,7 @@ public class Editor extends JFrame {
 			}
 			setSize(konfig.getX(), konfig.getY());
 		}
+		Speicher.merke(dea);
 		createFrame();
 
 	}
@@ -148,7 +149,9 @@ public class Editor extends JFrame {
 					if(confirm == 0 || confirm == 1){
 						DEA tmp = new DEA("");
 						if(speichereDEA("Neuen DEA erstellen", tmp)){
+							Speicher.leereMerkeListe();
 							dea = tmp;
+							Speicher.merke(dea);
 						}
 					}
 				}
@@ -189,6 +192,8 @@ public class Editor extends JFrame {
 								if(speichereDEA("Geladener DEA hat keinen Namen", tmp)){
 									dea = tmp;
 									konfig.setArbeitsverzeichnis(auswahl.getCurrentDirectory().toString());
+									Speicher.leereMerkeListe();
+									Speicher.merke(dea);
 								}
 								else{
 									JOptionPane.showMessageDialog(getRootPane(), "Fehlerhafter Datei. Laden nicht moeglich", "Fehler", JOptionPane.ERROR_MESSAGE);
@@ -224,6 +229,7 @@ public class Editor extends JFrame {
 					DEA tmp = (DEA) Speicher.lade(auswahl.getSelectedFile().toString());
 					if(tmp != null){
 						dea.importiere(tmp);
+						Speicher.merke(dea);
 					}
 					else{
 						JOptionPane.showMessageDialog(getRootPane(), "Fehlerhafter Datei. Importieren nicht moeglich", "Fehler", JOptionPane.ERROR_MESSAGE);
@@ -422,8 +428,8 @@ public class Editor extends JFrame {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				//TODO
-
+				dea = Speicher.nimmAenderungZurueck();
+				leinwand.repaint();
 			}
 		});
 		symbolleiste.add(button);
@@ -436,7 +442,10 @@ public class Editor extends JFrame {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				dea.stoppe();
+				if(dea.istGesperrt()) {
+					dea.stoppe();
+					leinwand.repaint();
+				}
 			}
 		});
 		symbolleiste.add(button);
@@ -449,7 +458,43 @@ public class Editor extends JFrame {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				dea.starte(eingabe.getText());
+				if(!dea.starte(eingabe.getText())) {
+					if(!dea.istValidiert()) {
+						JOptionPane.showMessageDialog(null,
+								"Der DEA muss zum Starten zunaechst validiert werden",
+								"DEA Starten fehlgeschlagen", JOptionPane.WARNING_MESSAGE);
+						return;
+					}
+					else if(!dea.istGueltigeEingabe(eingabe.getText())) {
+						JOptionPane.showMessageDialog(null,
+								"Die Eingabe ist nicht gueltig!",
+								"DEA Starten fehlgeschlagen", JOptionPane.WARNING_MESSAGE);
+						return;
+					}
+					else if(!dea.istGesperrt()) {
+						JOptionPane.showMessageDialog(null,
+								"Der DEA wurde bereits gestartet",
+								"DEA Starten fehlgeschlagen", JOptionPane.WARNING_MESSAGE);
+						return;
+					}
+					else {
+						JOptionPane.showMessageDialog(null,
+								"Das Starten des DEAs ist fehgeschlagen.",
+								"DEA Starten fehlgeschlagen", JOptionPane.ERROR_MESSAGE);
+						return;
+					}
+				}
+				while(dea.istGesperrt()) {
+					try {
+						Thread.sleep(konfig.getDauer());
+					} catch (InterruptedException e1) {
+						JOptionPane.showMessageDialog(null, "Etwas ist schiefgelaufen",
+								"Fehler", JOptionPane.ERROR_MESSAGE);
+						e1.printStackTrace();
+					}
+					dea.geheWeiter();
+					leinwand.repaint();
+				}
 			}
 		});
 		symbolleiste.add(button);
@@ -688,7 +733,6 @@ public class Editor extends JFrame {
 		erstelleInhalt();
 		erstelleMenue();
 		erstelleSymbolleiste();
-		dea.fuegeZeichenHinzu('b');
 		inhalt.add(leinwand = new LeinwandDEA(dea));
 		erstelleEingabeLeiste();
 		setVisible(true);
