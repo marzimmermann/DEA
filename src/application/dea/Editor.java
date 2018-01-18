@@ -367,7 +367,8 @@ public class Editor extends JFrame {
 	                try {
 						desktop.open(new File("src"+fileSeperator+"data"+fileSeperator+"Was ist ein DEA.pdf"));
 					} catch (IOException e1) {
-						// TODO Auto-generated catch block
+						JOptionPane.showMessageDialog(null, "Beim Oeffnen der DEA-Hilfe"
+								+ " ist leider etwas schief gelaufen.", "Fehler", JOptionPane.ERROR_MESSAGE);
 						e1.printStackTrace();
 					}
 	            }
@@ -379,7 +380,16 @@ public class Editor extends JFrame {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				// TODO Auto-generated method stub
+				Desktop desktop = Desktop.getDesktop();
+	            if (desktop != null && desktop.isSupported(Desktop.Action.OPEN)) {
+	                try {
+						desktop.open(new File("src"+fileSeperator+"data"+fileSeperator+"Bedienungsanleitung.pdf"));
+					} catch (IOException e1) {
+						JOptionPane.showMessageDialog(null, "Beim Oeffnen der Bedienunganleitung"
+								+ " ist leider etwas schief gelaufen.", "Fehler", JOptionPane.ERROR_MESSAGE);
+						e1.printStackTrace();
+					}
+	            }
 				
 			}
 		});
