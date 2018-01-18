@@ -88,40 +88,38 @@ public class Tests {
 		dea.fuegeTransitionHinzu("6",'1',"6");
 		dea.fuegeTransitionHinzu("7",'0',"7");
 		dea.fuegeTransitionHinzu("7",'1',"7");
-		dea.fuegeTransitionHinzu("8 ",'0',"7");
+		dea.fuegeTransitionHinzu("8",'0',"7");
 		dea.fuegeTransitionHinzu("8",'1',"7");
-		//dea = dea.minimiere(); //klappt so nicht
-		
-		DEA d= new DEA("D");
-		d = dea.minimiere();
-		String ausgabe = "" ;//+ d.toString() +"\n"; //gibt auch einen fehler
+		dea.setStart("0");
+		dea = dea.minimiere();
+		String ausgabe = "" + (dea.toString()).split("DEA großDEA:\n")[1]; 
 		
 		DEA vergl = new DEA("kleinDEA");
-		vergl.fuegeZustandHinzu(false);
-		vergl.fuegeZustandHinzu(false);
-		vergl.fuegeZustandHinzu(false);
-		vergl.fuegeZustandHinzu(false);
-		vergl.fuegeZustandHinzu(false);
-		vergl.fuegeZustandHinzu(false);
-		vergl.fuegeZustandHinzu(true);
+		vergl.fuegeZustandHinzu("2",false);
+		vergl.fuegeZustandHinzu("3",false);
+		vergl.fuegeZustandHinzu("4",false);
+		vergl.fuegeZustandHinzu("5",false);
+		vergl.fuegeZustandHinzu("6",false);
+		vergl.fuegeZustandHinzu("1",false);
+		vergl.fuegeZustandHinzu("0",true);
 		vergl.fuegeZeichenHinzu("01");
-		vergl.fuegeTransitionHinzu("0",'0',"1");
-		vergl.fuegeTransitionHinzu("0",'1',"2");
-		vergl.fuegeTransitionHinzu("1",'0',"3");
-		vergl.fuegeTransitionHinzu("1",'1',"3");
-		vergl.fuegeTransitionHinzu("2",'0',"4");
+		vergl.fuegeTransitionHinzu("2",'0',"3");
 		vergl.fuegeTransitionHinzu("2",'1',"4");
 		vergl.fuegeTransitionHinzu("3",'0',"5");
-		vergl.fuegeTransitionHinzu("3",'1',"6");
+		vergl.fuegeTransitionHinzu("3",'1',"5");
 		vergl.fuegeTransitionHinzu("4",'0',"6");
-		vergl.fuegeTransitionHinzu("4",'1',"5");
-		vergl.fuegeTransitionHinzu("5",'0',"6");
-		vergl.fuegeTransitionHinzu("5",'1',"6");
-		vergl.fuegeTransitionHinzu("6",'0',"6");
-		vergl.fuegeTransitionHinzu("6",'1',"6");
+		vergl.fuegeTransitionHinzu("4",'1',"6");
+		vergl.fuegeTransitionHinzu("5",'0',"1");
+		vergl.fuegeTransitionHinzu("5",'1',"0");
+		vergl.fuegeTransitionHinzu("6",'0',"0");
+		vergl.fuegeTransitionHinzu("6",'1',"1");
+		vergl.fuegeTransitionHinzu("1",'0',"0");
+		vergl.fuegeTransitionHinzu("1",'1',"0");
+		vergl.fuegeTransitionHinzu("0",'0',"0");
+		vergl.fuegeTransitionHinzu("0",'1',"0");
 		
-		ausgabe += vergl.toString();
-		print("Test3: DEA minimieren", "Methode minimieren mit validiertem DEA testen", "(DEA)", "", ausgabe);
+		String erwartet = "" + (vergl.toString()).split("DEA kleinDEA:\n")[1];
+		print("Test3: DEA minimieren", "Methode minimieren mit validiertem DEA testen", "(DEA)", erwartet, ausgabe);
 	}
 	
 	public static void test4(){
@@ -165,7 +163,7 @@ public class Tests {
 	public static void main (String arv[]){
 		test1();
 		test2();
-		//test3();
+		test3();
 		test4();
 		test5();
 		test6();
