@@ -542,6 +542,9 @@ public class Editor extends JFrame {
 				    			"Hinzufuegen der Transition war nicht erfolgreich",
 				    			"Fehler", JOptionPane.WARNING_MESSAGE);
 				    }
+				    else {
+				    	leinwand.repaint();
+				    }
 				}
 			}
 		});
@@ -649,7 +652,7 @@ public class Editor extends JFrame {
 		erstelleInhalt();
 		erstelleMenue();
 		erstelleSymbolleiste();
-
+		dea.fuegeZeichenHinzu('b');
 		inhalt.add(leinwand = new LeinwandDEA(dea));
 		erstelleEingabeLeiste();
 		setVisible(true);

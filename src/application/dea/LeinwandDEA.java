@@ -27,6 +27,7 @@ public class LeinwandDEA extends JPanel {
 		setBackground(Color.WHITE);
 		addMouseListener(new MouseAdapter() {
 			private Zustand zustand;
+			private ZustandUmhueller zuUm;
 			@Override
 			public void mousePressed(MouseEvent e) {
 				int x = e.getX();
@@ -41,6 +42,17 @@ public class LeinwandDEA extends JPanel {
 						{
 							zustand = z;
 							break;
+						}
+						
+						for (Entry<Character, ZustandUmhueller> entry : z.getTransitionen().entrySet()) {
+							ZustandUmhueller zUm = entry.getValue();
+							double TranDistanz = getAbstand(new Point(zUm.getX(), zUm.getY()), new Point(x,y));
+							System.out.println("Distanz:"+TranDistanz+" ZX:"+zUm.getX()+" KX:"+x+" ZY:"+zUm.getY()+" KY:"+y );
+							if(TranDistanz < transitionDurchmesser/2) {
+								System.out.println("Ich funktioniere");
+								zuUm = zUm;
+								break;
+							}
 						}
 					}
 
@@ -60,7 +72,13 @@ public class LeinwandDEA extends JPanel {
 					zustand.setY(Math.max(0, Math.min(y, getHeight()-durchmesser)));
 					repaint();
 				}
+				else if(zuUm != null) {
+					zuUm.setX(Math.max(0, Math.min(e.getX(), getWidth()-transitionDurchmesser/2)));
+					zuUm.setY(Math.max(0, Math.min(e.getY(), getHeight()-transitionDurchmesser/2)));
+					repaint();
+				}
 				zustand = null;
+				zuUm= null;
 			}
 
 		});
@@ -107,7 +125,7 @@ public class LeinwandDEA extends JPanel {
 			mid.setLocation((a.getX()+b.getX())/2, (a.getY()+b.getY()) / 2);
 		}
 		a.getZustandhuelleTransition(Transition).setX((int)mid.getX());
-		a.getZustandhuelleTransition(Transition).setY((int)mid.getX());
+		a.getZustandhuelleTransition(Transition).setY((int)mid.getY());
 		g.drawOval((int)mid.getX()-transitionDurchmesser/2, (int)mid.getY()-transitionDurchmesser/2,
 				transitionDurchmesser, transitionDurchmesser);
 		
