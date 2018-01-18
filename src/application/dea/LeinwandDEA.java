@@ -47,9 +47,7 @@ public class LeinwandDEA extends JPanel {
 						for (Entry<Character, ZustandUmhueller> entry : z.getTransitionen().entrySet()) {
 							ZustandUmhueller zUm = entry.getValue();
 							double TranDistanz = getAbstand(new Point(zUm.getX(), zUm.getY()), new Point(x,y));
-							System.out.println("Distanz:"+TranDistanz+" ZX:"+zUm.getX()+" KX:"+x+" ZY:"+zUm.getY()+" KY:"+y );
 							if(TranDistanz < transitionDurchmesser/2) {
-								System.out.println("Ich funktioniere");
 								zuUm = zUm;
 								break;
 							}
