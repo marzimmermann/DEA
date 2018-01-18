@@ -303,7 +303,10 @@ public class Editor extends JFrame {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				// TODO Auto-generated method stub
+				String einstellungen = "Arbeitsverzeichnis: "+ konfig.getArbeitsverzeichnis() +
+						"\nUebergangsdauer:  "+(double)konfig.getDauer()/1000+" Sekunden";
+				JOptionPane.showMessageDialog(null, einstellungen, "Einstellungen",
+						JOptionPane.INFORMATION_MESSAGE);
 				
 			}
 		});
@@ -313,7 +316,19 @@ public class Editor extends JFrame {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				// TODO Auto-generated method stub
+				String dauer = JOptionPane.showInputDialog(null, "Ubergangsdauer:",
+					"Zustandsuebergangsdauer aendern", JOptionPane.QUESTION_MESSAGE);
+				if(dauer!= null) {
+					try{
+						double tmp = Double.parseDouble(dauer);
+						konfig.setDauer((long)(tmp*1000));
+					}
+					catch(NumberFormatException e1) {
+						JOptionPane.showMessageDialog(getContentPane(),
+								"Ungueltige Eingabe, die Dauer konnte nicht geaendert werden.",
+								"Fehler",  JOptionPane.ERROR_MESSAGE);
+					}
+				}
 				
 			}
 		});
@@ -323,8 +338,19 @@ public class Editor extends JFrame {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				// TODO Auto-generated method stub
-				
+				JFileChooser auswahl = new JFileChooser();
+				auswahl.setDialogTitle("Neues Arbeitsverzeichnis waehlen");
+				auswahl.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+				auswahl.setCurrentDirectory(new File(konfig.getArbeitsverzeichnis()));
+				auswahl.setAcceptAllFileFilterUsed(false);
+				try{
+					if (auswahl.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) { 
+						konfig.setArbeitsverzeichnis(auswahl.getSelectedFile().toString());
+					}
+				}
+				catch(IndexOutOfBoundsException exce){
+					JOptionPane.showMessageDialog(getRootPane(), "Fehlerhafter Ordner", "Fehler", JOptionPane.ERROR_MESSAGE);
+				}
 			}
 		});
 		reiter.add(item);

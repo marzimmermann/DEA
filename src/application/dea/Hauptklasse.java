@@ -14,7 +14,10 @@ public class Hauptklasse {
 			String verzeichnis = new Startseite().getVerzeichnis();
 			konfiguration.setArbeitsverzeichnis(verzeichnis.toString());
 			DEA d = new DEA("");
-			konfiguration.setLetzterDea(konfiguration.getArbeitsverzeichnis()+"/"+d.getName());
+			konfiguration.setLetzterDea(konfiguration.getArbeitsverzeichnis()+
+					System.getProperty("file.separator")+d.getName());
+			konfiguration.setDauer(1000);
+			
 		}
 		Editor e = new Editor(konfiguration);
 		
@@ -23,13 +26,3 @@ public class Hauptklasse {
 	}
 
 }
-/*
-EventQueue.invokeLater(new Runnable() {
-	public void run() {
-		try {
-			Editor frame = new Editor(konfiguration);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-});*/

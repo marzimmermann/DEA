@@ -30,6 +30,9 @@ public class LeinwandDEA extends JPanel {
 			private ZustandUmhueller zuUm;
 			@Override
 			public void mousePressed(MouseEvent e) {
+				if(e.isPopupTrigger()) {
+					System.out.println("Rechtsklick");
+				}
 				int x = e.getX();
 				int y = e.getY();
 				if(zustand == null){
