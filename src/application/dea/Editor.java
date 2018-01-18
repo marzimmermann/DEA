@@ -550,7 +550,7 @@ public class Editor extends JFrame {
 		img  = new ImageIcon(pfadIcons+"StartArrow.png");
 		i = img.getImage().getScaledInstance(40, 40, java.awt.Image.SCALE_SMOOTH);
 		button = new JButton(new ImageIcon(i));
-		button.setToolTipText("Transition hinzufuegen");
+		button.setToolTipText("Startzustand waehlen");
 		button.addActionListener(new ActionListener() {
 
 			@Override
@@ -560,8 +560,47 @@ public class Editor extends JFrame {
 		});
 		symbolleiste.add(button);
 		symbolleiste.addSeparator();
-		
-		
+		img  = new ImageIcon(pfadIcons+"buttonAlphaShow.png");
+		i = img.getImage().getScaledInstance(40, 40, java.awt.Image.SCALE_SMOOTH);
+		button = new JButton(new ImageIcon(i));
+		button.setToolTipText("Alphabet anzeigen");
+		button.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				//TODO
+			}
+		});
+		symbolleiste.add(button);
+		symbolleiste.addSeparator();
+		img  = new ImageIcon(pfadIcons+"buttonAlphaAdd.png");
+		i = img.getImage().getScaledInstance(40, 40, java.awt.Image.SCALE_SMOOTH);
+		button = new JButton(new ImageIcon(i));
+		button.setToolTipText("Alphabet erweitern");
+		button.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				//TODO
+			}
+		});
+		symbolleiste.add(button);
+		symbolleiste.addSeparator();
+		symbolleiste.add(button);
+		symbolleiste.addSeparator();
+		img  = new ImageIcon(pfadIcons+"buttonAlphaRemove.png");
+		i = img.getImage().getScaledInstance(40, 40, java.awt.Image.SCALE_SMOOTH);
+		button = new JButton(new ImageIcon(i));
+		button.setToolTipText("Alphabet verkleinern");
+		button.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				//TODO
+			}
+		});
+		symbolleiste.add(button);
+		symbolleiste.addSeparator();
 		
 		
 		inhalt.add(symbolleiste, BorderLayout.PAGE_START);
