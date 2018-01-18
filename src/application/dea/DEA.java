@@ -19,6 +19,7 @@ public class DEA implements Serializable {
     private HashSet<Character> alphabet = new HashSet<>();
     private HashMap<String, Zustand> zustaende = new HashMap<>();
     private Zustand start, aktuellerZustand = start;
+    private String fileSeperator = System.getProperty("file.separator");
     
     /*
      * Konstruktoren
@@ -390,7 +391,7 @@ public class DEA implements Serializable {
     
     /** speichert den DEA im angegebenen Verzeichnis */
     public boolean speichere(String verzeichnis) {
-        boolean tmp = Speicher.speichere(this, verzeichnis+"\\"+name+".dea");
+        boolean tmp = Speicher.speichere(this, verzeichnis+fileSeperator+name+".dea");
         if (tmp) {
             gespeichert = true;
         }
@@ -399,7 +400,7 @@ public class DEA implements Serializable {
     
     /** speichert den DEA im angegebenen Verzeichnis */
     public DEA lade(String verzeichnis, String name) {
-        DEA tmp = (DEA) Speicher.lade(verzeichnis+"\\"+name+".dea");
+        DEA tmp = (DEA) Speicher.lade(verzeichnis+fileSeperator+name+".dea");
         return tmp;
     }
     
