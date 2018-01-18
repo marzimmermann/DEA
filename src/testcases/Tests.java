@@ -56,8 +56,14 @@ public class Tests {
 		ausgabe += dea.istValidiert() +",";
 		dea.loescheTransition("1",'x');
 		dea.validiere();
+		ausgabe += dea.istValidiert() +",";
+		dea.fuegeTransitionHinzu("1",'x',"1");
+		dea.validiere();
+		ausgabe += dea.istValidiert() +",";
+		dea.fuegeZeichenHinzu("z");
+		dea.validiere();
 		ausgabe += dea.istValidiert();
-		print("Test2: DEA validieren", "Methode validieren mit korrekten und falschen DEAs testen", "(DEA)", "false,true,false", ausgabe);
+		print("Test2: DEA validieren", "Methode validieren mit korrekten und falschen DEAs testen", "(DEA)", "false,true,false,true,false", ausgabe);
 	}
 	
 	public static void test3(){
@@ -117,7 +123,7 @@ public class Tests {
 		vergl.fuegeTransitionHinzu("1",'1',"0");
 		vergl.fuegeTransitionHinzu("0",'0',"0");
 		vergl.fuegeTransitionHinzu("0",'1',"0");
-		
+		vergl.setStart("2");
 		String erwartet = "" + (vergl.toString()).split("DEA kleinDEA:\n")[1];
 		print("Test3: DEA minimieren", "Methode minimieren mit validiertem DEA testen", "(DEA)", erwartet, ausgabe);
 	}
@@ -158,7 +164,67 @@ public class Tests {
         print("Test6: DEA Alphabet veraendern", "Test,ob beim Loeschen von Symbolen des Alphabets auch zugehoerige Transitionen geloescht werden", "(DEA)", "false", ausgabe);
 	}
 	
+	public static void test7(){
+        DEA dea = new DEA("aDea");
+		dea.fuegeZustandHinzu(false);
+		dea.fuegeZustandHinzu(false);
+		dea.fuegeZustandHinzu(false);
+		dea.fuegeZustandHinzu(false);
+		dea.fuegeZustandHinzu(false);
+		dea.fuegeZustandHinzu(false);
+		dea.fuegeZustandHinzu(true);
+		dea.fuegeZustandHinzu(true);
+		dea.fuegeZustandHinzu(false);
+		dea.fuegeZeichenHinzu("01");
+		dea.fuegeTransitionHinzu("0",'0',"1");
+		dea.fuegeTransitionHinzu("0",'1',"2");
+		dea.fuegeTransitionHinzu("1",'0',"3");
+		dea.fuegeTransitionHinzu("1",'1',"3");
+		dea.fuegeTransitionHinzu("2",'0',"4");
+		dea.fuegeTransitionHinzu("2",'1',"4");
+		dea.fuegeTransitionHinzu("3",'0',"5");
+		dea.fuegeTransitionHinzu("3",'1',"6");
+		dea.fuegeTransitionHinzu("4",'0',"7");
+		dea.fuegeTransitionHinzu("4",'1',"8");
+		dea.fuegeTransitionHinzu("5",'0',"6");
+		dea.fuegeTransitionHinzu("5",'1',"6");
+		dea.fuegeTransitionHinzu("6",'0',"6");
+		dea.fuegeTransitionHinzu("6",'1',"6");
+		dea.fuegeTransitionHinzu("7",'0',"7");
+		dea.fuegeTransitionHinzu("7",'1',"7");
+		dea.fuegeTransitionHinzu("8",'0',"7");
+		dea.fuegeTransitionHinzu("8",'1',"7");
+		dea.setStart("0");
+		dea.starte("010");
+		String ausgabe = "" + dea.getAktuellerZustand();
+		dea.geheWeiter();
+		 ausgabe += dea.getAktuellerZustand();
+		dea.geheWeiter();
+		ausgabe += dea.getAktuellerZustand();
+		dea.geheWeiter();
+		ausgabe += dea.getAktuellerZustand();
+		dea.geheWeiter();
+		ausgabe += dea.getAktuellerZustand();
+		print("Test7: DEA ausfuehren", "Test der Methoden starte(String eingabe), geheWeiter() und stoppe()", "(DEA)", "01350", ausgabe);
+	}
 	
+	public static void test8(){
+        DEA dea = new DEA("fDea");
+		dea.fuegeZustandHinzu(false);
+		dea.fuegeZustandHinzu(true);
+		dea.fuegeZeichenHinzu("xy");
+		dea.fuegeTransitionHinzu("0",'x',"1");
+		dea.fuegeTransitionHinzu("0",'y',"1");
+		dea.fuegeTransitionHinzu("1",'x',"1");
+		dea.fuegeTransitionHinzu("1",'y',"0");
+		dea.starte("xy");
+		String ausgabe = "" + dea.getAktuellerZustand();
+		dea.geheWeiter();
+		ausgabe += dea.getAktuellerZustand();
+		dea.geheWeiter();
+		ausgabe += dea.getAktuellerZustand();
+		print("Test8: unvollstaendigen DEA ausfuehren", "Test, ob die Methoden starte(String eingabe), geheWeiter() und stoppe() nicht ausgefuehrt werden", "(DEA)", "", ausgabe);
+	}
 	
 	public static void main (String arv[]){
 		test1();
@@ -167,5 +233,7 @@ public class Tests {
 		test4();
 		test5();
 		test6();
+		test7();
+		test8();
 	}
 }
