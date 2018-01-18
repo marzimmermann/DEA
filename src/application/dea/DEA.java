@@ -293,6 +293,20 @@ public class DEA implements Serializable {
         // setze Startzustand
         tmp.setStart(""+(neuerZst[getIndex.get(this.start)]-1));
         
+        // ordne Zustaende im Kreis an
+        double r = 200, m = r+100;
+        int k = 1;
+        for (Zustand z : tmp.zustaende.values()) {
+            if (z == tmp.start) {
+                z.setX((int) (m-r));
+                z.setY((int) m);
+            } else {
+                z.setX((int) (m-r*Math.cos(2*k*Math.PI/zustId)));
+                z.setY((int) (m+r*Math.sin(2*k*Math.PI/zustId)));
+                k++;
+            }
+        }
+        
         // fuege Transitionen hinzu
         boolean benutzt[] = new boolean[zustId];
         for (int i = 0; i < zust.length; i++) {
@@ -432,6 +446,14 @@ public class DEA implements Serializable {
         gespeichert = false;
         start = zustaende.get(zustand);
         aktuellerZustand = start;
+    }
+    
+    /** gibt den Startzustand zurueck */
+    public String getStart() {
+        if (start != null) {
+            return start.getName();
+        }
+        return "";
     }
     
     /** setzt die Eingabe des Automaten um und gibt zurueck, ob die Eingabe gueltig ist */
