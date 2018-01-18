@@ -275,7 +275,7 @@ public class DEA implements Serializable {
                     zustId++;
                     neuerZst[i] = zustId;
                     neuerZst[j] = zustId;
-                    tmp.fuegeZustandHinzu(""+zustId, zust[i].istAkzeptierend());
+                    tmp.fuegeZustandHinzu(""+(zustId-1), zust[i].istAkzeptierend());
                 }
             }
         }
@@ -284,12 +284,12 @@ public class DEA implements Serializable {
         for (int i = 0; i < neuerZst.length; i++) {
             if (neuerZst[i] == 0) {
                 neuerZst[i] = ++zustId;
-                tmp.fuegeZustandHinzu(""+zustId, zust[i].istAkzeptierend());
+                tmp.fuegeZustandHinzu(""+(zustId-1), zust[i].istAkzeptierend());
             }
         }
         
         // setze Startzustand
-        tmp.setStart(""+(neuerZst[getIndex.get(this.start)]));
+        tmp.setStart(""+(neuerZst[getIndex.get(this.start)]-1));
         
         // fuege Transitionen hinzu
         boolean benutzt[] = new boolean[zustId];
@@ -297,7 +297,7 @@ public class DEA implements Serializable {
             if (!benutzt[neuerZst[i]-1]) {
                 benutzt[neuerZst[i]-1] = true;
                 for (char c : alphabet) {
-                    tmp.fuegeTransitionHinzu(""+neuerZst[i], c, ""+neuerZst[getIndex.get(zust[i].getTransition(c))]);
+                    tmp.fuegeTransitionHinzu(""+(neuerZst[i]-1), c, ""+(neuerZst[getIndex.get(zust[i].getTransition(c))]-1));
                 }
             }
         }
@@ -546,6 +546,8 @@ public class DEA implements Serializable {
         System.out.println(d);
         
         DEA f = d;
+        
+        d.speichere("/home/d.todt/");
         
         System.out.println("\n\nZweiter Test:\n");
         
