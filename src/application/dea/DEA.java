@@ -324,7 +324,7 @@ public class DEA implements Serializable {
         if (!tmp.istValidiert()) {
             throw new RuntimeException("Minimierung hat nicht funkioniert");
         }
-        
+
         return tmp;
     }
     

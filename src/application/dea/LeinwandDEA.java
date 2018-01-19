@@ -13,10 +13,14 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.font.FontRenderContext;
 import java.awt.font.GlyphVector;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import javax.imageio.ImageIO;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.Scrollable;
@@ -33,6 +37,9 @@ public class LeinwandDEA extends JPanel {
 	private double selbstOvaldicke = 40;//Durchmesser des Ovals an der orthogonalen achse zwischen Zustand und Mitte
 	private double selbstAbstand = 40;//Mindestabstand der Mitte zum Zustand
 	private int fontSize = 20;
+	private String fileSeperator = System.getProperty("file.separator");
+	private String pfadIcons = "src"+fileSeperator+"data"+
+			fileSeperator+"icons"+fileSeperator+"StartArrow";
 
 	public LeinwandDEA(DEA d){
 		super();
@@ -44,7 +51,7 @@ public class LeinwandDEA extends JPanel {
 			@Override
 			public void mousePressed(MouseEvent e) {
 				if(e.isPopupTrigger()) {
-					System.out.println("Rechtsklick");
+			//TODO
 				}
 				int x = e.getX();
 				int y = e.getY();
@@ -80,11 +87,13 @@ public class LeinwandDEA extends JPanel {
 					/* Verhindert, dass Zustand aus dem Panel gezogen wird */
 					zustand.setX(Math.max(0, Math.min(x, getWidth()-durchmesser)));
 					zustand.setY(Math.max(0, Math.min(y, getHeight()-durchmesser)));
+					Speicher.merke(dea);
 					repaint();
 				}
 				else if(zuUm != null) {
 					zuUm.setX(Math.max(0, Math.min(e.getX(), getWidth()-transitionDurchmesser/2)));
 					zuUm.setY(Math.max(0, Math.min(e.getY(), getHeight()-transitionDurchmesser/2)));
+					Speicher.merke(dea);
 					repaint();
 				}
 				zustand = null;
@@ -125,6 +134,11 @@ public class LeinwandDEA extends JPanel {
 				zeichnePfeile(g, z, zUm.getZustand(), zeichen);
 			}
 		}
+	}
+	
+	void setDEA(DEA d){
+		dea = d;
+		repaint();
 	}
 
 	/**

@@ -1,8 +1,6 @@
 package application.dea;
 
 import java.awt.BorderLayout;
-import java.awt.Canvas;
-import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.InputEvent;
@@ -12,16 +10,9 @@ import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.FileSystem;
-import java.awt.Color;
-import java.awt.ComponentOrientation;
 import java.awt.Desktop;
 import java.awt.Dimension;
-import javax.print.attribute.standard.JobImpressionsCompleted;
-import javax.swing.Action;
-import javax.swing.Box;
 import javax.swing.ImageIcon;
-import javax.swing.InputMap;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
@@ -34,7 +25,6 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.JToolBar;
 import javax.swing.KeyStroke;
-import javax.swing.border.EmptyBorder;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.Image;
 
@@ -193,6 +183,7 @@ public class Editor extends JFrame {
 							if(tmp != null){
 								if(speichereDEA("Geladener DEA hat keinen Namen", tmp)){
 									dea = tmp;
+									leinwand.setDEA(dea);
 									konfig.setArbeitsverzeichnis(auswahl.getCurrentDirectory().toString());
 									Speicher.leereMerkeListe();
 									Speicher.merke(dea);
@@ -421,7 +412,6 @@ public class Editor extends JFrame {
 
 	private void erstelleSymbolleiste(){
 		symbolleiste = new JToolBar("Symbolleiste");
-		String fileSeperator = System.getProperty("file.separator");
 		String pfadIcons = "src"+fileSeperator+"data"+
 				fileSeperator+"icons"+fileSeperator;
 		symbolleiste.addSeparator();
@@ -434,8 +424,8 @@ public class Editor extends JFrame {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				System.out.println("Test");
 				dea = Speicher.nimmAenderungZurueck();
+				leinwand.setDEA(dea);
 				leinwand.repaint();
 			}
 		});
@@ -577,9 +567,10 @@ public class Editor extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				DEA tmp = dea.minimiere();
 				if(tmp != null){
-					dea = tmp;
+					dea = new DEA(tmp);
+					System.out.println(dea.toString());
 					Speicher.merke(dea);
-					leinwand.repaint();
+					leinwand.setDEA(dea);
 				}
 				else{
 					if(!dea.istValidiert()){
