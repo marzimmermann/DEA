@@ -239,7 +239,7 @@ public class Tests {
 		dea.speichere(".");
 		
 		DEA d = new DEA("bDEA");
-		d.lade(".", "aDEA");   //nicht korrekt
+		d.lade(".", "aDEA.dea");   //nicht korrekt
 		String ausgabe = d.toString() +"\n";
 		
 		DEA e = new DEA("cDEA");
@@ -250,8 +250,9 @@ public class Tests {
 	}
 	
 	public static void test10(){
-        String ausgabe = "";
-        print("Test9: DEA rückgängig machen", "Test, ob die Methode die letzte Änderung korrekt und maximal 15 Änderungen rückgängig macht", "(DEA)", "", ausgabe);
+		
+        	String ausgabe = "";
+		print("Test9: DEA rückgängig machen", "Test, ob die Methode die letzte Änderung korrekt und maximal 15 Änderungen rückgängig macht", "(DEA)", "", ausgabe);
 	}
 	
 	public static void main (String arv[]){
