@@ -226,6 +226,34 @@ public class Tests {
 		print("Test8: unvollstaendigen DEA ausfuehren", "Test, ob die Methoden starte(String eingabe), geheWeiter() und stoppe() nicht ausgefuehrt werden", "(DEA)", "", ausgabe);
 	}
 	
+	public static void test9(){
+        DEA dea = new DEA("aDea");
+		dea.fuegeZustandHinzu(false);
+		dea.fuegeZustandHinzu(true);
+		dea.fuegeZeichenHinzu("xy");
+		dea.fuegeTransitionHinzu("0",'x',"1");
+		dea.fuegeTransitionHinzu("0",'y',"1");
+		dea.fuegeTransitionHinzu("1",'x',"1");
+		dea.fuegeTransitionHinzu("1",'y',"0");
+		dea.setStart("0");
+		dea.speichere(".");
+		
+		DEA d = new DEA("bDEA");
+		d.lade(".", "aDEA");   //nicht korrekt
+		String ausgabe = d.toString() +"\n";
+		
+		DEA e = new DEA("cDEA");
+		e.importiere(dea);   //korrekt
+		ausgabe += e.toString();
+		
+		print("Test9: DEA speicehrn,laden und importieren", "Test, der Methoden speichern,laden und importieren", "(DEA)", "", ausgabe);
+	}
+	
+	public static void test10(){
+        String ausgabe = "";
+        print("Test9: DEA rückgängig machen", "Test, ob die Methode die letzte Änderung korrekt und maximal 15 Änderungen rückgängig macht", "(DEA)", "", ausgabe);
+	}
+	
 	public static void main (String arv[]){
 		test1();
 		test2();
@@ -235,5 +263,8 @@ public class Tests {
 		test6();
 		test7();
 		test8();
+		test9();  //noch nicht vollständig korrekt
+		//test10();
+		//an Laura/Daniel: im Editor beim Symbol aus Alphabet loeschen bleibt Transition erhalten
 	}
 }
