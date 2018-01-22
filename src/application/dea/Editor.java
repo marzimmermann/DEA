@@ -39,10 +39,6 @@ public class Editor extends JFrame {
 	private JTextField eingabe;
 	private String fileSeperator = System.getProperty("file.separator");
 	/**
-	 * Launch the application.
-	 */
-
-	/**
 	 * Create the frame.
 	 */
 	public Editor(Konfiguration k) {
@@ -64,6 +60,9 @@ public class Editor extends JFrame {
 
 	}
 
+	/**
+	 * gibt dem x rechts in der Ecke die Funktion
+	 */
 	private void erstelleBeenden() {
 		setDefaultCloseOperation(DO_NOTHING_ON_CLOSE); 
 		WindowListener exitListener = new WindowAdapter() {
@@ -113,6 +112,9 @@ public class Editor extends JFrame {
 		addWindowListener(exitListener);
 	}
 
+	/**
+	 * 
+	 */
 	private void erstelleInhalt() {
 		inhalt = new JPanel(new BorderLayout());
 		inhalt.setSize(this.getSize());
@@ -142,8 +144,9 @@ public class Editor extends JFrame {
 						DEA tmp = new DEA("");
 						if(speichereDEA("Neuen DEA erstellen", tmp)){
 							Speicher.leereMerkeListe();
-							dea = tmp;
+							dea = new DEA(tmp);
 							Speicher.merke(dea);
+							leinwand.setDEA(dea);
 						}
 					}
 				}
@@ -182,7 +185,7 @@ public class Editor extends JFrame {
 							DEA tmp = (DEA) Speicher.lade(auswahl.getSelectedFile().toString());
 							if(tmp != null){
 								if(speichereDEA("Geladener DEA hat keinen Namen", tmp)){
-									dea = tmp;
+									dea = new DEA(tmp);
 									leinwand.setDEA(dea);
 									konfig.setArbeitsverzeichnis(auswahl.getCurrentDirectory().toString());
 									Speicher.leereMerkeListe();
