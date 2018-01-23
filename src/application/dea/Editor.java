@@ -151,6 +151,22 @@ public class Editor extends JFrame {
 						}
 					}
 				}
+				else {
+					Object[] options = {"Neuen DEA erstellen", "Abbrechen"};
+					int confirm = JOptionPane.showOptionDialog(
+							null, "Moechten Sie einen neuen DEA erstellen?", 
+							"Neuer DEA", JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE,
+							null, options, options[0]);	
+					if(confirm == 0 ){
+						DEA tmp = new DEA("");
+						if(speichereDEA("Neuen DEA erstellen", tmp)){
+							Speicher.leereMerkeListe();
+							dea = new DEA(tmp);
+							Speicher.merke(dea);
+							leinwand.setDEA(dea);
+						}
+					}
+				}
 
 			}
 		});
