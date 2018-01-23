@@ -2,6 +2,15 @@
 
 <project name="dea" default="archive">
     
+    <property name="build" value="./build/classes"/>
+    <property name="dist" value="./dist"/>
+    
+    <path id="project.class.path">
+        <pathelement path="${build}"/>
+        <pathelement path="${dist}/data"/>
+    </path>
+    
+    <!--erstellen-->
     <target name="init">
         <mkdir dir="build/classes"/>
         <mkdir dir="dist"/>
@@ -12,17 +21,33 @@
                srcdir="./" destdir="build/classes"/>
     </target>
     
+    <target name="test-set-language-links" depends="init" description="Ueberprueft, ob die Links zu den Daten (Icons,..) existieren">
+        <condition property="isNotADir">
+            <not>
+                <available file="./dist/data"
+                         type="dir" />
+            </not>
+        </condition>
+    </target>
+    
+    <target name="create-language-links" depends="test-set-language-links" if="isNotADir" description="Erstellt die Links zu den Daten">
+        <exec executable="ln" error="/dev/null" os="Linux">
+            <arg line="-sn" />
+            <arg file="./src/data" />
+            <arg file="./dist/data" />
+        </exec>
+    </target>
+    
     <target name="archive" depends="compile">
-        <jar destfile="dist/dea.jar"
-             basedir="build/classes"/>
+        <jar destfile="dist/dea.jar" basedir="build/classes">
+             <manifest>
+                 <attribute name="Main-Class" value="application.dea.Hauptklasse"/>
+                 <attribute name="Class-Path" value="dist/data/"/>
+             </manifest>
+        </jar>
     </target>
     
-    <target name="clean" depends="init">
-        <delete dir="build"/>
-        <delete dir="dist"/>
-    </target>
-    
-    <!--muss noch ergaenzt werden-->
+    <!--ausführen-->
     <target name="execute" depends="compile">
         <java classpath="build/classes"
               classname="application.dea.Hauptklasse" fork="true"/>
@@ -38,18 +63,26 @@
               classname="application.dea.DEA"/>
     </target>
     
-    <!--muss noch ergaenzt werden-->
-    <target name="execute-jar" depends="compile">
-        <java classpath="dist/dea.jar"
-              classname="application.dea.Hauptklasse"/>
+    <target name="execute-jar" depends="archive">
+        <java jar="dist/dea.jar" fork="true"/>
     </target>
     
-    <!--muss noch ergaenzt werden-->
-    <target name="execute-redirect-stdout" depends="compile">
-        <java classpath="build/classes"
-              classname="application.dea.Hauptklasse"
-              input="./src/data/???"
-              output="???.out"/>
+    <!--aufraeumen-->
+    <target name="clean" depends="delete-language-links" description="Loescht die Verzeichnisstruktur">
+        <delete dir="build"/>
+        <delete dir="dist"/>
+    </target>
+  
+    <target name="test-remove-language-links" description="Ueberprueft, ob die Links zu den Daten existieren">
+        <condition property="isADir">
+            <available file="./dist/data" type="dir" />
+        </condition>
+    </target>
+  
+    <target name="delete-language-links" depends="test-remove-language-links" if="isAdir" description="Loescht die Links zu den Daten" >
+        <exec executable="rm" error="/dev/null" os="Linux">
+            <arg file="./dist/data" />
+        </exec>
     </target>
     
 </project>
