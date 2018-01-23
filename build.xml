@@ -7,34 +7,36 @@
     
     <path id="project.class.path">
         <pathelement path="${build}"/>
-        <pathelement path="${dist}/data"/>
+        <pathelement path="${dist}/data/icons"/>
+        <pathelement path="${dist}/data/Bedienungsanleitung.pdf"/>
     </path>
     
     <!--erstellen-->
     <target name="init">
         <mkdir dir="build/classes"/>
         <mkdir dir="dist"/>
+        <mkdir dir="dist/data"/>
     </target>
     
-    <target name="compile" depends="init">
+    <target name="compile" depends="create-data-links">
         <javac includeantruntime="true"
                srcdir="./" destdir="build/classes"/>
     </target>
     
-    <target name="test-set-language-links" depends="init" description="Ueberprueft, ob die Links zu den Daten (Icons,..) existieren">
+    <target name="test-set-data-links" depends="init" description="Ueberprueft, ob die Links zu den Daten (Icons,..) existieren">
         <condition property="isNotADir">
             <not>
-                <available file="./dist/data"
+                <available file="./dist/data/icons"
                          type="dir" />
             </not>
         </condition>
     </target>
     
-    <target name="create-language-links" depends="test-set-language-links" if="isNotADir" description="Erstellt die Links zu den Daten">
+    <target name="create-data-links" depends="test-set-data-links" if="isNotADir" description="Erstellt die Links zu den Daten">
         <exec executable="ln" error="/dev/null" os="Linux">
             <arg line="-sn" />
-            <arg file="./src/data" />
-            <arg file="./dist/data" />
+            <arg file="./src/data/icons" />
+            <arg file="./dist/data/icons" />
         </exec>
     </target>
     
@@ -64,24 +66,24 @@
     </target>
     
     <target name="execute-jar" depends="archive">
-        <java jar="dist/dea.jar" fork="true"/>
+        <java classpathref="project.class.path" jar="dist/dea.jar" fork="true"/>
     </target>
     
     <!--aufraeumen-->
-    <target name="clean" depends="delete-language-links" description="Loescht die Verzeichnisstruktur">
+    <target name="clean" depends="delete-data-links" description="Loescht die Verzeichnisstruktur">
         <delete dir="build"/>
         <delete dir="dist"/>
     </target>
   
-    <target name="test-remove-language-links" description="Ueberprueft, ob die Links zu den Daten existieren">
+    <target name="test-remove-data-links" description="Ueberprueft, ob die Links zu den Daten existieren">
         <condition property="isADir">
-            <available file="./dist/data" type="dir" />
+            <available file="./dist/data/icons" type="dir" />
         </condition>
     </target>
   
-    <target name="delete-language-links" depends="test-remove-language-links" if="isAdir" description="Loescht die Links zu den Daten" >
+    <target name="delete-data-links" depends="test-remove-data-links" if="isAdir" description="Loescht die Links zu den Daten" >
         <exec executable="rm" error="/dev/null" os="Linux">
-            <arg file="./dist/data" />
+            <arg file="./dist/data/icons" />
         </exec>
     </target>
     
