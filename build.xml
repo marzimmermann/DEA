@@ -2,27 +2,54 @@
 
 <project name="dea" default="archive">
     
+    <property name="build" value="./build/classes"/>
+    <property name="dist" value="./dist"/>
+    
+    <path id="project.class.path">
+        <pathelement path="${build}"/>
+        <pathelement path="${dist}/data/icons"/>
+        <pathelement path="${dist}/data/Bedienungsanleitung.pdf"/>
+    </path>
+    
+    <!--erstellen-->
     <target name="init">
         <mkdir dir="build/classes"/>
         <mkdir dir="dist"/>
+        <mkdir dir="dist/data"/>
     </target>
     
-    <target name="compile" depends="init">
+    <target name="compile" depends="create-data-links">
         <javac includeantruntime="true"
                srcdir="./" destdir="build/classes"/>
     </target>
     
+    <target name="test-set-data-links" depends="init" description="Ueberprueft, ob die Links zu den Daten (Icons,..) existieren">
+        <condition property="isNotADir">
+            <not>
+                <available file="./dist/data/icons"
+                         type="dir" />
+            </not>
+        </condition>
+    </target>
+    
+    <target name="create-data-links" depends="test-set-data-links" if="isNotADir" description="Erstellt die Links zu den Daten">
+        <exec executable="ln" error="/dev/null" os="Linux">
+            <arg line="-sn" />
+            <arg file="./src/data/icons" />
+            <arg file="./dist/data/icons" />
+        </exec>
+    </target>
+    
     <target name="archive" depends="compile">
-        <jar destfile="dist/dea.jar"
-             basedir="build/classes"/>
+        <jar destfile="dist/dea.jar" basedir="build/classes">
+             <manifest>
+                 <attribute name="Main-Class" value="application.dea.Hauptklasse"/>
+                 <attribute name="Class-Path" value="dist/data/"/>
+             </manifest>
+        </jar>
     </target>
     
-    <target name="clean" depends="init">
-        <delete dir="build"/>
-        <delete dir="dist"/>
-    </target>
-    
-    <!--muss noch ergaenzt werden-->
+    <!--ausführen-->
     <target name="execute" depends="compile">
         <java classpath="build/classes"
               classname="application.dea.Hauptklasse" fork="true"/>
@@ -38,18 +65,26 @@
               classname="application.dea.DEA"/>
     </target>
     
-    <!--muss noch ergaenzt werden-->
-    <target name="execute-jar" depends="compile">
-        <java classpath="dist/dea.jar"
-              classname="application.dea.Hauptklasse"/>
+    <target name="execute-jar" depends="archive">
+        <java classpathref="project.class.path" jar="dist/dea.jar" fork="true"/>
     </target>
     
-    <!--muss noch ergaenzt werden-->
-    <target name="execute-redirect-stdout" depends="compile">
-        <java classpath="build/classes"
-              classname="application.dea.Hauptklasse"
-              input="./src/data/???"
-              output="???.out"/>
+    <!--aufraeumen-->
+    <target name="clean" depends="delete-data-links" description="Loescht die Verzeichnisstruktur">
+        <delete dir="build"/>
+        <delete dir="dist"/>
+    </target>
+  
+    <target name="test-remove-data-links" description="Ueberprueft, ob die Links zu den Daten existieren">
+        <condition property="isADir">
+            <available file="./dist/data/icons" type="dir" />
+        </condition>
+    </target>
+  
+    <target name="delete-data-links" depends="test-remove-data-links" if="isAdir" description="Loescht die Links zu den Daten" >
+        <exec executable="rm" error="/dev/null" os="Linux">
+            <arg file="./dist/data/icons" />
+        </exec>
     </target>
     
 </project>
