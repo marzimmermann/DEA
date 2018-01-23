@@ -52,6 +52,7 @@ public class Editor extends JFrame {
 		else {
 			if(dea.getName() !=""){
 				letzterGespeicherterDEA = dea.getName();
+				speichereDEA();
 			}
 			setSize(konfig.getX(), konfig.getY());
 		}
@@ -225,6 +226,7 @@ public class Editor extends JFrame {
 					DEA tmp = (DEA) Speicher.lade(auswahl.getSelectedFile().toString());
 					if(tmp != null){
 						dea.importiere(tmp);
+						leinwand.repaint();
 						Speicher.merke(dea);
 					}
 					else{
@@ -300,6 +302,71 @@ public class Editor extends JFrame {
 				}
 			}
 		});
+		reiter.add(item);
+		menue.add(reiter);
+		reiter = new JMenu("DEA");
+		item = new JMenuItem("Aenderung zuruecknehmen", KeyEvent.VK_Z);
+		item.setAccelerator(
+				KeyStroke.getKeyStroke( 'Z', InputEvent.CTRL_DOWN_MASK )
+		);
+		item.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				dea = Speicher.nimmAenderungZurueck();
+				leinwand.setDEA(dea);
+				leinwand.repaint();
+				
+			}
+		} );
+		reiter.add(item);
+		item = new JMenuItem("DEA starten", KeyEvent.VK_S);
+		item.setAccelerator(
+				KeyStroke.getKeyStroke( 'P', InputEvent.CTRL_DOWN_MASK )
+		);
+		item.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if(!dea.starte(eingabe.getText())) {
+					if(!dea.istValidiert()) {
+						JOptionPane.showMessageDialog(null,
+								"Der DEA muss zum Starten zunaechst validiert werden",
+								"DEA Starten fehlgeschlagen", JOptionPane.WARNING_MESSAGE);
+						return;
+					}
+					else if(!dea.istGueltigeEingabe(eingabe.getText())) {
+						JOptionPane.showMessageDialog(null,
+								"Die Eingabe ist nicht gueltig!",
+								"DEA Starten fehlgeschlagen", JOptionPane.WARNING_MESSAGE);
+						return;
+					}
+					else if(!dea.istGesperrt()) {
+						JOptionPane.showMessageDialog(null,
+								"Der DEA wurde bereits gestartet",
+								"DEA Starten fehlgeschlagen", JOptionPane.WARNING_MESSAGE);
+						return;
+					}
+					else {
+						JOptionPane.showMessageDialog(null,
+								"Das Starten des DEAs ist fehgeschlagen.",
+								"DEA Starten fehlgeschlagen", JOptionPane.ERROR_MESSAGE);
+						return;
+					}
+				}
+				while(dea.istGesperrt()) {
+					try {
+						Thread.sleep(konfig.getDauer());
+					} catch (InterruptedException e1) {
+						JOptionPane.showMessageDialog(null, "Etwas ist schiefgelaufen",
+								"Fehler", JOptionPane.ERROR_MESSAGE);
+						e1.printStackTrace();
+					}
+					dea.geheWeiter();
+					leinwand.update(leinwand.getGraphics());
+				}
+			}
+		} );
 		reiter.add(item);
 		menue.add(reiter);
 		reiter = new JMenu("Einstellungen");
