@@ -114,7 +114,7 @@ public class Editor extends JFrame {
 	}
 
 	/**
-	 * 
+	 * Erstellt das Panel auf dem alles aufgebaut ist
 	 */
 	private void erstelleInhalt() {
 		inhalt = new JPanel(new BorderLayout());
@@ -122,6 +122,9 @@ public class Editor extends JFrame {
 		setContentPane(inhalt);
 	}
 
+	/**
+	 * erstellt die textuelle MenueLeiste
+	 */
 	private void erstelleMenue() {
 		menue = new JMenuBar();
 		JMenu reiter  = new JMenu("Datei");
@@ -188,6 +191,44 @@ public class Editor extends JFrame {
 						}
 					}
 					if(confirm == 0 || confirm == 1){
+						JFileChooser auswahl = new JFileChooser();
+						FileNameExtensionFilter filter = new FileNameExtensionFilter("Nur DEA Dateien", ".dea");
+						auswahl.setFileFilter(filter);
+						auswahl.setCurrentDirectory(new File(konfig.getArbeitsverzeichnis()));
+						try{
+							auswahl.showOpenDialog( null );
+						}
+						catch(IndexOutOfBoundsException exce){
+							JOptionPane.showMessageDialog(getRootPane(), "Fehlerhafter Ordner", "Fehler", JOptionPane.ERROR_MESSAGE);
+						}
+						if(auswahl.getSelectedFile() != null){
+							DEA tmp = (DEA) Speicher.lade(auswahl.getSelectedFile().toString());
+							if(tmp != null){
+								if(speichereDEA("Geladener DEA hat keinen Namen", tmp)){
+									dea = new DEA(tmp);
+									leinwand.setDEA(dea);
+									konfig.setArbeitsverzeichnis(auswahl.getCurrentDirectory().toString());
+									Speicher.leereMerkeListe();
+									Speicher.merke(dea);
+								}
+								else{
+									JOptionPane.showMessageDialog(getRootPane(), "Fehlerhafter Datei. Laden nicht moeglich", "Fehler", JOptionPane.ERROR_MESSAGE);
+								}
+							}
+							else{
+								JOptionPane.showMessageDialog(getRootPane(), "Fehlerhafter Datei. Laden nicht moeglich", "Fehler", JOptionPane.ERROR_MESSAGE);
+							}
+						}
+
+					}
+				}
+				else{
+					Object[] options = {"Anderen DEA laden", "Abbrechen"};
+					int confirm = JOptionPane.showOptionDialog(
+							null, "Moechten Sie einen anderen DEA laden?", 
+							"DEA laden", JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE,
+							null, options, options[0]);	
+					if(confirm == 0){
 						JFileChooser auswahl = new JFileChooser();
 						FileNameExtensionFilter filter = new FileNameExtensionFilter("Nur DEA Dateien", ".dea");
 						auswahl.setFileFilter(filter);
