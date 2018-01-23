@@ -543,6 +543,9 @@ public class Editor extends JFrame {
 		setJMenuBar(menue);
 	}
 
+	/**
+	 * erstellt die bildliche Symbolleiste
+	 */
 	private void erstelleSymbolleiste(){
 		symbolleiste = new JToolBar("Symbolleiste");
 		String pfadIcons = "src"+fileSeperator+"data"+
@@ -729,7 +732,7 @@ public class Editor extends JFrame {
 				if(zName != null){
 					if(dea.fuegeZustandHinzu(zName, false)){
 						Speicher.merke(dea);
-						leinwand.repaint();
+						leinwand.setDEA(dea);
 					}
 					else{
 						JOptionPane.showMessageDialog(getContentPane(), "Hinzufuegen des Zustandes war nicht erfolgreich",
@@ -753,7 +756,7 @@ public class Editor extends JFrame {
 				if(zName != null){
 					if(dea.fuegeZustandHinzu(zName, true)){
 						Speicher.merke(dea);
-						leinwand.repaint();
+						leinwand.setDEA(dea);
 					}
 					else{
 						JOptionPane.showMessageDialog(getContentPane(), "Hinzufuegen des Zustandes war nicht erfolgreich",
@@ -787,6 +790,9 @@ public class Editor extends JFrame {
 						tra = ueber.getText().charAt(0);
 					}
 					catch(java.lang.StringIndexOutOfBoundsException ex1) {
+						JOptionPane.showMessageDialog(null, 
+								"Hinzufuegen der Transition war nicht erfolgreich, da Angaben fehlen",
+								"Fehler", JOptionPane.WARNING_MESSAGE);
 						return;
 					}
 					if (!dea.fuegeTransitionHinzu(von.getText(), tra,
@@ -797,7 +803,7 @@ public class Editor extends JFrame {
 					}
 					else {
 						Speicher.merke(dea);
-						leinwand.repaint();
+						leinwand.setDEA(dea);
 					}
 				}
 			}
@@ -819,7 +825,8 @@ public class Editor extends JFrame {
 							"Startzustand waehlen fehlgeschlagen", JOptionPane.ERROR_MESSAGE);
 					return;
 				}
-				leinwand.repaint();
+				Speicher.merke(dea);
+				leinwand.setDEA(dea);
 			}
 		});
 		symbolleiste.add(button);
@@ -859,10 +866,10 @@ public class Editor extends JFrame {
 				catch(java.lang.NullPointerException ex1) {
 					return;
 				}
+				Speicher.merke(dea);
+				leinwand.setDEA(dea);
 			}
 		});
-		symbolleiste.add(button);
-		symbolleiste.addSeparator();
 		symbolleiste.add(button);
 		symbolleiste.addSeparator();
 		img  = new ImageIcon(pfadIcons+"buttonAlphaRemove.png");
@@ -881,6 +888,8 @@ public class Editor extends JFrame {
 				catch(java.lang.NullPointerException ex1) {
 					return;
 				}
+				Speicher.merke(dea);
+				leinwand.setDEA(dea);
 			}
 		});
 		symbolleiste.add(button);
@@ -889,6 +898,9 @@ public class Editor extends JFrame {
 		inhalt.add(symbolleiste, BorderLayout.PAGE_START);
 	}
 
+	/**
+	 * erstellt die Eingabe-Leiste am unteren Rand
+	 */
 	private void erstelleEingabeLeiste(){
 		eingabe = new JTextField();
 		eingabeLeiste  = new JToolBar();
@@ -899,10 +911,23 @@ public class Editor extends JFrame {
 		inhalt.add(eingabeLeiste, BorderLayout.PAGE_END);
 	}
 
+	/**
+	 * speichert denaktuellen geladenen DEA
+	 * @return true , wenn das Speichern erfolgreich ist,
+	 *  das heisst, der DEA einen gueltigen Namen besitzt und
+	 *  erfolgreich abgespeichert wurde
+	 */
 	public boolean speichereDEA(){
 		return speichereDEA("DEA speichern als", dea);
 	}
 
+	/**
+	 * 
+	 * @param titel: Ist der Titel des Dislogs
+	 * @param d: zu speichernde DEA
+	 * @return true, wenn das Speichern wie zuvor erfolgreich
+	 * ausgefuehrt werden konnte
+	 */
 	public boolean speichereDEA(String titel, DEA d){
 		while(d.getName() == ""){
 			String deaName = (JOptionPane.showInputDialog(this.getContentPane(),
@@ -922,8 +947,10 @@ public class Editor extends JFrame {
 		return true;
 	}
 
-
-
+	/**
+	 * ruft alle Funktionen, um das Fenster zu erstellen,
+	 * in der richtigen Reihenfolge auf
+	 */
 	private void createFrame() {
 		setTitle("DEA - Editor");
 		setLocationRelativeTo(null);
