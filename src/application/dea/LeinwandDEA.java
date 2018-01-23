@@ -9,6 +9,8 @@ import java.awt.Point;
 import java.awt.Polygon;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.font.FontRenderContext;
@@ -21,7 +23,11 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import javax.imageio.ImageIO;
+import javax.swing.JList;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.Scrollable;
 
@@ -46,13 +52,11 @@ public class LeinwandDEA extends JPanel {
 		dea = d;
 		setBackground(Color.WHITE);
 		addMouseListener(new MouseAdapter() {
-			private Zustand zustand;
+			private Zustand zustand, tmp;
 			private ZustandUmhueller zuUm;
+			private char tmpZeichen;
 			@Override
 			public void mousePressed(MouseEvent e) {
-				if(e.isPopupTrigger()) {
-			//TODO
-				}
 				int x = e.getX();
 				int y = e.getY();
 				if(zustand == null){
@@ -72,32 +76,143 @@ public class LeinwandDEA extends JPanel {
 							double TranDistanz = getAbstand(new Point(zUm.getX(), zUm.getY()), new Point(x,y));
 							if(TranDistanz < transitionDurchmesser/2) {
 								zuUm = zUm;
+								tmp = z;
+								tmpZeichen = entry.getKey();
 								break;
 							}
 						}
 					}
 				}
+				if(e.isPopupTrigger()) {
+					if(zustand != null) {
+						erzeugePopUpMenue(e, zustand);
+
+					}
+					else if(zuUm != null) {
+						erzeugePopUpMenue(e, zuUm, tmp, tmpZeichen);
+					}
+					zuUm = null;
+					zustand = null;
+					tmp = null;
+				}
 			}
+
 
 			@Override
 			public void mouseReleased(MouseEvent e) {
 				if(zustand != null){
 					int x = e.getX()-durchmesser/2;
 					int y = e.getY()-durchmesser/2;
-					/* Verhindert, dass Zustand aus dem Panel gezogen wird */
-					zustand.setX(Math.max(0, Math.min(x, getWidth()-durchmesser)));
-					zustand.setY(Math.max(0, Math.min(y, getHeight()-durchmesser)));
-					Speicher.merke(dea);
-					repaint();
+
+						/* Verhindert, dass Zustand aus dem Panel gezogen wird */
+						zustand.setX(Math.max(0, Math.min(x, getWidth()-durchmesser)));
+						zustand.setY(Math.max(0, Math.min(y, getHeight()-durchmesser)));
+						Speicher.merke(dea);
+						repaint();
+						dea.setUngespeichert();
+
 				}
 				else if(zuUm != null) {
 					zuUm.setX(Math.max(0, Math.min(e.getX(), getWidth()-transitionDurchmesser/2)));
 					zuUm.setY(Math.max(0, Math.min(e.getY(), getHeight()-transitionDurchmesser/2)));
 					Speicher.merke(dea);
 					repaint();
+					dea.setUngespeichert();
 				}
 				zustand = null;
 				zuUm= null;
+				tmp = null;
+			}
+
+			private void erzeugePopUpMenue(MouseEvent e, Zustand zustand) {
+				JPopupMenu menu = new JPopupMenu();
+				JMenuItem item = new JMenuItem("Zustand loeschen");
+				item.addActionListener(new ActionListener() {
+
+					@Override
+					public void actionPerformed(ActionEvent e) {
+						dea.loescheZustand(zustand.getName());
+						Speicher.merke(dea);
+						repaint();
+						dea.setUngespeichert();
+					}
+				});
+				menu.add(item);
+				item = new JMenuItem("Zustand umbennen");
+				item.addActionListener(new ActionListener() {
+
+					@Override
+					public void actionPerformed(ActionEvent e) {
+						if(!dea.benneneZustandUm(zustand.getName(),
+								JOptionPane.showInputDialog(null,
+										"Zustand umbennen", zustand.getName()))) {
+							JOptionPane.showMessageDialog(null,
+									"Umbennung des Zustandes ist fehlgeschlagen",
+									"Umbennen nicht erfolgreich", 
+									JOptionPane.WARNING_MESSAGE);
+							return;
+						}
+						Speicher.merke(dea);
+						repaint();
+						dea.setUngespeichert();
+					}
+				});
+				menu.add(item);
+				item = new JMenuItem("Abbrechen");
+				item.addActionListener(new ActionListener() {
+
+					@Override
+					public void actionPerformed(ActionEvent e) {
+						
+					}
+				});
+				menu.add(item);
+				menu.show(e.getComponent(), zustand.getX(), zustand.getY()); 
+			}
+			private void erzeugePopUpMenue(MouseEvent e, ZustandUmhueller zuUm2, Zustand zustand, char transi) {
+				JPopupMenu menu = new JPopupMenu();
+				JMenuItem item = new JMenuItem("Transition loeschen");
+				item.addActionListener(new ActionListener() {
+
+					@Override
+					public void actionPerformed(ActionEvent e) {
+						dea.loescheTransition(tmp.getName(), transi);
+						Speicher.merke(dea);
+						repaint();
+						dea.setUngespeichert();
+					}
+				});
+				menu.add(item);
+				item = new JMenuItem("Zustand umbennen");
+				item.addActionListener(new ActionListener() {
+
+					@Override
+					public void actionPerformed(ActionEvent e) {
+						if(!dea.benneneZustandUm(zustand.getName(),
+								JOptionPane.showInputDialog(null,
+										"Zustand umbennen", zustand.getName()))) {
+							JOptionPane.showMessageDialog(null,
+									"Umbennung des Zustandes ist fehlgeschlagen",
+									"Umbennen nicht erfolgreich", 
+									JOptionPane.WARNING_MESSAGE);
+							return;
+						}
+						Speicher.merke(dea);
+						repaint();
+						dea.setUngespeichert();
+					}
+				});
+				menu.add(item);
+				item = new JMenuItem("Abbrechen");
+				item.addActionListener(new ActionListener() {
+
+					@Override
+					public void actionPerformed(ActionEvent e) {
+						
+					}
+				});
+				menu.add(item);
+				menu.show(e.getComponent(), zustand.getX(), zustand.getY()); 
 			}
 
 		});
@@ -135,17 +250,17 @@ public class LeinwandDEA extends JPanel {
 			}
 		}
 	}
-	 /**
-	  * 
-	  * @param aktueller DEA d
-	  * setzt die Referenz der Leinwand um
-	  * und zeichnet die Leinwand neu
-	  */
+	/**
+	 * 
+	 * @param aktueller DEA d
+	 * setzt die Referenz der Leinwand um
+	 * und zeichnet die Leinwand neu
+	 */
 	public void setDEA(DEA d){
 		dea = d;
 		repaint();
 	}
-	
+
 	/**
 	 * Gedacht, um beim Starten nur die Zustaende 
 	 * neu zu zeichnen
@@ -171,7 +286,7 @@ public class LeinwandDEA extends JPanel {
 			zeichneZustand(g, p, z.getName(), durchmesser, z.istAkzeptierend());
 		}
 	}
-	
+
 	/**
 	 * Zeichnet Pfeil von Zustand a auf Zustand b ueber Transition 
 	 * @param g Grafik

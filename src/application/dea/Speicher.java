@@ -57,7 +57,7 @@ public class Speicher {
     /** fuegt den uebergebenen DEA in die Aenderungsliste hinzu */
     public static void merke(DEA dea) {
         aenderungen.add(new DEA(dea));
-        if (aenderungen.size() > 15) {
+        if (aenderungen.size() > 16) {
             aenderungen.removeFirst();
         }
     }

@@ -543,6 +543,11 @@ public class DEA implements Serializable {
         return sb.toString();
     }
     
+    /** setzt den Speicher-Status auf false */
+    public void setUngespeichert() {
+    	gespeichert = false;
+    }
+    
     /** Main-Methode zum Testen */
     public static void main(String args[]) {
         /*
