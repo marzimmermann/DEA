@@ -236,23 +236,94 @@ public class Tests {
 		dea.fuegeTransitionHinzu("1",'x',"1");
 		dea.fuegeTransitionHinzu("1",'y',"0");
 		dea.setStart("0");
-		dea.speichere(".");
+		dea.speichere("./dist");
+		String erwartet = dea.toString() +"\nDEA cDea:";
+		erwartet += (dea.toString()).split("DEA aDea:")[1];
 		
-		DEA d = new DEA("bDEA");
-		d.lade(".", "aDEA.dea");   //nicht korrekt
-		String ausgabe = d.toString() +"\n";
 		
-		DEA e = new DEA("cDEA");
+		DEA d = new DEA("");
+		d = d.lade("./dist", "aDea");   
+		String ausgabe = d.toString() +"\nDEA cDea:";
+		
+		DEA e = new DEA("cDea");
 		e.importiere(dea);   //korrekt
-		ausgabe += e.toString();
+		ausgabe += (e.toString()).split("DEA cDea:")[1];
 		
-		print("Test9: DEA speicehrn,laden und importieren", "Test, der Methoden speichern,laden und importieren", "(DEA)", "", ausgabe);
+		print("Test9: DEA speicehrn,laden und importieren", "Test, der Methoden speichern,laden und importieren", "(DEA)", erwartet, ausgabe);
 	}
 	
 	public static void test10(){
-		
-        	String ausgabe = "";
-		print("Test9: DEA rückgängig machen", "Test, ob die Methode die letzte Änderung korrekt und maximal 15 Änderungen rückgängig macht", "(DEA)", "", ausgabe);
+        String ausgabe = "", erwartet = "";
+        String[] a = new String[16];
+        DEA dea = new DEA("aDea");
+        dea.fuegeZustandHinzu(false);
+        a[0] = dea.toString();
+        Speicher.merke(dea);
+		dea.fuegeZustandHinzu(false);
+        a[1] = dea.toString();
+		Speicher.merke(dea);
+		dea.fuegeZustandHinzu(false);
+        a[2] = dea.toString();
+		Speicher.merke(dea);
+		dea.fuegeZustandHinzu(false);
+        a[3] = dea.toString();
+		Speicher.merke(dea);
+		dea.fuegeZustandHinzu(false);
+        a[4] = dea.toString();
+		Speicher.merke(dea);
+		dea.fuegeZustandHinzu(true);
+        a[5] = dea.toString();
+		Speicher.merke(dea);
+		dea.fuegeZeichenHinzu("01");
+		dea.fuegeTransitionHinzu("0",'0',"1");
+        a[6] = dea.toString();
+		Speicher.merke(dea);
+		dea.fuegeTransitionHinzu("0",'1',"2");
+        a[7] = dea.toString();
+		Speicher.merke(dea);
+		dea.fuegeTransitionHinzu("1",'0',"3");
+        a[8] = dea.toString();
+		Speicher.merke(dea);
+		dea.fuegeTransitionHinzu("1",'1',"3");
+        a[9] = dea.toString();
+		Speicher.merke(dea);
+		dea.fuegeTransitionHinzu("2",'0',"4");
+        a[10] = dea.toString();
+		Speicher.merke(dea);
+		dea.fuegeTransitionHinzu("2",'1',"4");
+        a[11] = dea.toString();
+		Speicher.merke(dea);
+		dea.fuegeTransitionHinzu("3",'0',"5");
+        a[12] = dea.toString();
+		Speicher.merke(dea);
+		dea.fuegeTransitionHinzu("3",'1',"4");
+        a[13] = dea.toString();
+		Speicher.merke(dea);
+		dea.fuegeTransitionHinzu("4",'0',"1");
+        a[14] = dea.toString();
+		Speicher.merke(dea);
+		dea.fuegeTransitionHinzu("4",'1',"2");
+        a[15] = dea.toString();
+		Speicher.merke(dea);
+		dea.fuegeTransitionHinzu("5",'0',"5");
+		Speicher.merke(dea);
+        
+        for(int i=15; i>0; i--){
+            dea = Speicher.nimmAenderungZurueck();
+            if((dea.toString()).equals(a[i])){
+                //ausgabe += i +": " +dea.toString() +"\n";
+                //erwartet += i +": " +a[i] +"\n";
+                ausgabe += "true,";
+            }
+            else{
+                //ausgabe += i +"falsch: " +dea.toString() +"\n";
+                //erwartet += i +"falsch: " +a[i] +"\n";
+                ausgabe += "false,";
+            }
+        }
+        
+        erwartet += "true,true,true,true,true,true,true,true,true,true,true,true,true,true,false,";
+		print("Test9: DEA rückgängig machen", "Test, ob die Methode die letzte Änderung korrekt und maximal 15 Änderungen rückgängig macht", "(DEA)", erwartet, ausgabe);
 	}
 	
 	public static void main (String arv[]){
@@ -264,8 +335,7 @@ public class Tests {
 		test6();
 		test7();
 		test8();
-		test9();  //noch nicht vollständig korrekt
-		//test10();
-		//an Laura/Daniel: im Editor beim Symbol aus Alphabet loeschen bleibt Transition erhalten
+		test9();  
+		test10();
 	}
 }
