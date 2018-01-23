@@ -241,9 +241,15 @@ public class Editor extends JFrame {
 				if(auswahl.getSelectedFile() != null){
 					DEA tmp = (DEA) Speicher.lade(auswahl.getSelectedFile().toString());
 					if(tmp != null){
-						dea.importiere(tmp);
-						leinwand.repaint();
+						try {
+							dea.importiere(tmp);
+						} 
+						catch(java.lang.NullPointerException ex2) {
+
+						}
+						leinwand.setDEA(dea);
 						Speicher.merke(dea);
+						return;
 					}
 					else{
 						JOptionPane.showMessageDialog(getRootPane(), "Fehlerhafter Datei. Importieren nicht moeglich", "Fehler", JOptionPane.ERROR_MESSAGE);
@@ -256,7 +262,7 @@ public class Editor extends JFrame {
 		item = new JMenuItem("Speichern", KeyEvent.VK_S);
 		item.setAccelerator(
 				KeyStroke.getKeyStroke( 'S', InputEvent.CTRL_DOWN_MASK )
-		);
+				);
 		item.addActionListener(new ActionListener() {
 
 			@Override
@@ -284,7 +290,7 @@ public class Editor extends JFrame {
 		item = new JMenuItem("Beenden", KeyEvent.VK_B);
 		item.setAccelerator(
 				KeyStroke.getKeyStroke( 'B', InputEvent.CTRL_DOWN_MASK )
-		);
+				);
 		item.addActionListener(new ActionListener() {
 
 			@Override
@@ -324,24 +330,24 @@ public class Editor extends JFrame {
 		item = new JMenuItem("Aenderung zuruecknehmen", KeyEvent.VK_Z);
 		item.setAccelerator(
 				KeyStroke.getKeyStroke( 'Z', InputEvent.CTRL_DOWN_MASK )
-		);
+				);
 		item.addActionListener(new ActionListener() {
-			
+
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				dea = Speicher.nimmAenderungZurueck();
 				leinwand.setDEA(dea);
 				leinwand.repaint();
-				
+
 			}
 		} );
 		reiter.add(item);
 		item = new JMenuItem("DEA starten", KeyEvent.VK_S);
 		item.setAccelerator(
 				KeyStroke.getKeyStroke( 'P', InputEvent.CTRL_DOWN_MASK )
-		);
+				);
 		item.addActionListener(new ActionListener() {
-			
+
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				if(!dea.starte(eingabe.getText())) {
@@ -388,24 +394,24 @@ public class Editor extends JFrame {
 		reiter = new JMenu("Einstellungen");
 		item = new JMenuItem("Konfigurationen anzeigen", KeyEvent.VK_K);
 		item.addActionListener(new ActionListener() {
-			
+
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				String einstellungen = "Arbeitsverzeichnis: "+ konfig.getArbeitsverzeichnis() +
 						"\nUebergangsdauer:  "+(double)konfig.getDauer()/1000+" Sekunden";
 				JOptionPane.showMessageDialog(null, einstellungen, "Einstellungen",
 						JOptionPane.INFORMATION_MESSAGE);
-				
+
 			}
 		});
 		reiter.add(item);
 		item = new JMenuItem("Zustandsuebergangsdauer aendern", KeyEvent.VK_Z);
 		item.addActionListener(new ActionListener() {
-			
+
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				String dauer = JOptionPane.showInputDialog(null, "Ubergangsdauer:",
-					"Zustandsuebergangsdauer aendern", JOptionPane.QUESTION_MESSAGE);
+						"Zustandsuebergangsdauer aendern", JOptionPane.QUESTION_MESSAGE);
 				if(dauer!= null) {
 					try{
 						double tmp = Double.parseDouble(dauer);
@@ -417,13 +423,13 @@ public class Editor extends JFrame {
 								"Fehler",  JOptionPane.ERROR_MESSAGE);
 					}
 				}
-				
+
 			}
 		});
 		reiter.add(item);
 		item = new JMenuItem("Arbeitsverzeichnis aendern", KeyEvent.VK_A);
 		item.addActionListener(new ActionListener() {
-			
+
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				JFileChooser auswahl = new JFileChooser();
@@ -443,48 +449,48 @@ public class Editor extends JFrame {
 		});
 		reiter.add(item);
 		menue.add(reiter);
-		
+
 		reiter = new JMenu("Hilfe");
 		item = new JMenuItem("Ueber DEAs", KeyEvent.VK_U);
 		item.addActionListener(new ActionListener() {
-			
+
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				Desktop desktop = Desktop.getDesktop();
-	            if (desktop != null && desktop.isSupported(Desktop.Action.OPEN)) {
-	                try {
+				if (desktop != null && desktop.isSupported(Desktop.Action.OPEN)) {
+					try {
 						desktop.open(new File("src"+fileSeperator+"data"+fileSeperator+"Was ist ein DEA.pdf"));
 					} catch (IOException e1) {
 						JOptionPane.showMessageDialog(null, "Beim Oeffnen der DEA-Hilfe"
 								+ " ist leider etwas schief gelaufen.", "Fehler", JOptionPane.ERROR_MESSAGE);
 						e1.printStackTrace();
 					}
-	            }
+				}
 			}
 		});
 		reiter.add(item);
 		item = new JMenuItem("Programmhinweise", KeyEvent.VK_H);
 		item.addActionListener(new ActionListener() {
-			
+
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				Desktop desktop = Desktop.getDesktop();
-	            if (desktop != null && desktop.isSupported(Desktop.Action.OPEN)) {
-	                try {
+				if (desktop != null && desktop.isSupported(Desktop.Action.OPEN)) {
+					try {
 						desktop.open(new File("src"+fileSeperator+"data"+fileSeperator+"Bedienungsanleitung.pdf"));
 					} catch (IOException e1) {
 						JOptionPane.showMessageDialog(null, "Beim Oeffnen der Bedienunganleitung"
 								+ " ist leider etwas schief gelaufen.", "Fehler", JOptionPane.ERROR_MESSAGE);
 						e1.printStackTrace();
 					}
-	            }
-				
+				}
+
 			}
 		});
 		reiter.add(item);
 		item = new JMenuItem("Impressum", KeyEvent.VK_I);
 		item.addActionListener(new ActionListener() {
-			
+
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				String impressum = "TODO: Impressum";
@@ -504,7 +510,7 @@ public class Editor extends JFrame {
 		ImageIcon img  = new ImageIcon(pfadIcons+"Backbutton.png");
 		Image i = img.getImage().getScaledInstance(40, 40, java.awt.Image.SCALE_SMOOTH);
 		JButton button = new JButton(new ImageIcon(i));
-		
+
 		button.setToolTipText("Rueckgaenging");
 		button.addActionListener(new ActionListener() {
 
@@ -660,11 +666,11 @@ public class Editor extends JFrame {
 				}
 				else{
 					if(!dea.istValidiert()){
-                        JOptionPane.showInternalMessageDialog(null, "DEA muss zum minimieren validiert werden",
-                        "DEA minimieren fehlgeschlagen", JOptionPane.ERROR_MESSAGE);
-                    }
+						JOptionPane.showInternalMessageDialog(null, "DEA muss zum minimieren validiert werden",
+								"DEA minimieren fehlgeschlagen", JOptionPane.ERROR_MESSAGE);
+					}
 				}
-				
+
 			}
 		});
 		symbolleiste.add(button);
@@ -729,22 +735,29 @@ public class Editor extends JFrame {
 				JTextField ueber = new JTextField(1);
 				JTextField zu = new JTextField();
 				Object[] message = {
-				    " Von : ", von,
-				    " Ueber : ", ueber,
-				    " Zu : ", zu,
+						" Von : ", von,
+						" Ueber : ", ueber,
+						" Zu : ", zu,
 				};
 				int option = JOptionPane.showConfirmDialog(null, message, "Transition hinzufuegen", JOptionPane.OK_CANCEL_OPTION);
 				if (option == JOptionPane.OK_OPTION) {
-				    if (!dea.fuegeTransitionHinzu(von.getText(),
-				    		ueber.getText().charAt(0), zu.getText())) {
-				    	JOptionPane.showMessageDialog(null, 
-				    			"Hinzufuegen der Transition war nicht erfolgreich",
-				    			"Fehler", JOptionPane.WARNING_MESSAGE);
-				    }
-				    else {
-				    	Speicher.merke(dea);
-				    	leinwand.repaint();
-				    }
+					char tra;
+					try {
+						tra = ueber.getText().charAt(0);
+					}
+					catch(java.lang.StringIndexOutOfBoundsException ex1) {
+						return;
+					}
+					if (!dea.fuegeTransitionHinzu(von.getText(), tra,
+							zu.getText())) {
+						JOptionPane.showMessageDialog(null, 
+								"Hinzufuegen der Transition war nicht erfolgreich",
+								"Fehler", JOptionPane.WARNING_MESSAGE);
+					}
+					else {
+						Speicher.merke(dea);
+						leinwand.repaint();
+					}
 				}
 			}
 		});
@@ -778,8 +791,13 @@ public class Editor extends JFrame {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				JOptionPane.showMessageDialog(null, dea.getAlphabet(),
-						"Alphabet anzeigen",JOptionPane.INFORMATION_MESSAGE);		
+				try {
+					JOptionPane.showMessageDialog(null, dea.getAlphabet(),
+							"Alphabet anzeigen",JOptionPane.INFORMATION_MESSAGE);
+				}
+				catch(java.lang.NullPointerException ex1) {
+					return;
+				}
 			}
 		});
 		symbolleiste.add(button);
@@ -792,9 +810,14 @@ public class Editor extends JFrame {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				dea.fuegeZeichenHinzu(JOptionPane.showInputDialog(null, 
-						"Zeichen zum Alphabet hinzufuegen", 
-						"Alphabet erweitern", JOptionPane.PLAIN_MESSAGE));
+				try {
+					dea.fuegeZeichenHinzu(JOptionPane.showInputDialog(null, 
+							"Zeichen zum Alphabet hinzufuegen", 
+							"Alphabet erweitern", JOptionPane.PLAIN_MESSAGE));
+				}
+				catch(java.lang.NullPointerException ex1) {
+					return;
+				}
 			}
 		});
 		symbolleiste.add(button);
@@ -809,14 +832,19 @@ public class Editor extends JFrame {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				dea.loescheZeichen(JOptionPane.showInputDialog(null, 
-						"Zeichen aus dem Alphabet entfernen", "Alphabet verringern",
-						JOptionPane.PLAIN_MESSAGE));
+				try {
+					dea.loescheZeichen(JOptionPane.showInputDialog(null, 
+							"Zeichen aus dem Alphabet entfernen", "Alphabet verringern",
+							JOptionPane.PLAIN_MESSAGE));
+				}
+				catch(java.lang.NullPointerException ex1) {
+					return;
+				}
 			}
 		});
 		symbolleiste.add(button);
 		symbolleiste.addSeparator();
-		
+
 		inhalt.add(symbolleiste, BorderLayout.PAGE_START);
 	}
 
@@ -829,7 +857,7 @@ public class Editor extends JFrame {
 		eingabeLeiste.add(eingabe);
 		inhalt.add(eingabeLeiste, BorderLayout.PAGE_END);
 	}
-	
+
 	public boolean speichereDEA(){
 		return speichereDEA("DEA speichern als", dea);
 	}
@@ -852,9 +880,9 @@ public class Editor extends JFrame {
 		letzterGespeicherterDEA = d.getName();
 		return true;
 	}
-	
-	
-	
+
+
+
 	private void createFrame() {
 		setTitle("DEA - Editor");
 		setLocationRelativeTo(null);
