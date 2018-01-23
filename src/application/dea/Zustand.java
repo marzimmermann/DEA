@@ -6,6 +6,7 @@
 package application.dea;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.io.Serializable;
 
 public abstract class Zustand implements Serializable {
@@ -62,7 +63,7 @@ public abstract class Zustand implements Serializable {
     
     /** loescht alle Transitionen, die zum uebergebenen Zustand fuehren */
     public void loescheTransitionen(Zustand zustand) {
-        for (char c : transitionen.keySet()) {
+        for (char c : new HashSet<Character>(transitionen.keySet())) {
             if (transitionen.get(c).getZustand() == zustand) {
                 loescheTransition(c);
             }

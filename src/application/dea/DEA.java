@@ -216,17 +216,31 @@ public class DEA implements Serializable {
     
     /** gibt sich selbst als minimalen DEA zurueck */
     public DEA minimiere() {
-    
-        /*
-         * ist noch nicht ausreichend getestet
-         * und auch nicht schoen implementiert
-         */
-        
         this.validiere();
         if (istGesperrt() || !istValidiert()) {
             return null;
         }
         gespeichert = false;
+        
+        // loesche nicht erreichbare Zustaende
+        HashSet<Zustand> erreichbar = new HashSet<>();
+        erreichbar.add(this.start);
+        int anzErreichbar = 0;
+        while (anzErreichbar != erreichbar.size()) {
+            anzErreichbar = erreichbar.size();
+            for (Zustand z : new HashSet<Zustand>(erreichbar)) {
+                for (char c : this.alphabet) {
+                    erreichbar.add(z.getTransition(c));
+                }
+            }
+        }
+        if (erreichbar.size() != this.zustaende.size()) {
+            for (Zustand z : new HashSet<Zustand>(this.zustaende.values())) {
+                if (!erreichbar.contains(z)) {
+                    this.loescheZustand(z.getName());
+                }
+            }
+        }
         
         // berechne Markierungstabelle
         Zustand zust[] = new Zustand[zustaende.size()];
@@ -347,6 +361,9 @@ public class DEA implements Serializable {
         this.zeichenIndex = dea.zeichenIndex;
         if (dea.start != null) {
             this.start = this.zustaende.get(dea.start.getName());
+        }
+        if (dea.aktuellerZustand != null) {
+            this.aktuellerZustand = this.zustaende.get(dea.aktuellerZustand.getName());
         }
     }
     
