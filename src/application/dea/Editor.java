@@ -426,7 +426,7 @@ public class Editor extends JFrame {
 						e1.printStackTrace();
 					}
 					dea.geheWeiter();
-					leinwand.update(leinwand.getGraphics());
+					leinwand.repaintZustaende();
 				}
 			}
 		} );
@@ -623,7 +623,7 @@ public class Editor extends JFrame {
 						e1.printStackTrace();
 					}
 					dea.geheWeiter();
-					leinwand.update(leinwand.getGraphics());
+					leinwand.repaintZustaende();
 				}
 			}
 		});

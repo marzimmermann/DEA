@@ -135,12 +135,43 @@ public class LeinwandDEA extends JPanel {
 			}
 		}
 	}
-	
-	void setDEA(DEA d){
+	 /**
+	  * 
+	  * @param aktueller DEA d
+	  * setzt die Referenz der Leinwand um
+	  * und zeichnet die Leinwand neu
+	  */
+	public void setDEA(DEA d){
 		dea = d;
 		repaint();
 	}
+	
+	/**
+	 * Gedacht, um beim Starten nur die Zustaende 
+	 * neu zu zeichnen
+	 */
 
+	public void repaintZustaende() {
+		Graphics2D g = (Graphics2D) getGraphics();
+
+		//Bestimmte Schrifftart und textgroesse
+		g.setFont(new Font("TimesRoman", Font.PLAIN, fontSize)); 
+
+		//Mache Kanten weich
+		g.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+				RenderingHints.VALUE_ANTIALIAS_ON);
+		g.setColor(Color.BLACK);
+		for( Zustand z : dea.getZustaende()){
+			if(!dea.getAktuellerZustand().equals("")){
+				if(z.getName().equals(dea.getAktuellerZustand())){
+					g.setColor(Color.MAGENTA);
+				}
+			}
+			Point p = new Point(z.getX()+durchmesser/2, z.getY()+durchmesser/2);
+			zeichneZustand(g, p, z.getName(), durchmesser, z.istAkzeptierend());
+		}
+	}
+	
 	/**
 	 * Zeichnet Pfeil von Zustand a auf Zustand b ueber Transition 
 	 * @param g Grafik
