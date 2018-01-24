@@ -159,13 +159,6 @@ public class LeinwandDEA extends JPanel {
 				});
 				menu.add(item);
 				item = new JMenuItem("Abbrechen");
-				item.addActionListener(new ActionListener() {
-
-					@Override
-					public void actionPerformed(ActionEvent e) {
-						
-					}
-				});
 				menu.add(item);
 				menu.show(e.getComponent(), zustand.getX(), zustand.getY()); 
 			}
@@ -176,27 +169,7 @@ public class LeinwandDEA extends JPanel {
 
 					@Override
 					public void actionPerformed(ActionEvent e) {
-						dea.loescheTransition(tmp.getName(), transi);
-						Speicher.merke(dea);
-						repaint();
-						dea.setUngespeichert();
-					}
-				});
-				menu.add(item);
-				item = new JMenuItem("Zustand umbennen");
-				item.addActionListener(new ActionListener() {
-
-					@Override
-					public void actionPerformed(ActionEvent e) {
-						if(!dea.benneneZustandUm(zustand.getName(),
-								JOptionPane.showInputDialog(null,
-										"Zustand umbennen", zustand.getName()))) {
-							JOptionPane.showMessageDialog(null,
-									"Umbennung des Zustandes ist fehlgeschlagen",
-									"Umbennen nicht erfolgreich", 
-									JOptionPane.WARNING_MESSAGE);
-							return;
-						}
+						dea.loescheTransition(zustand.getName(), transi);
 						Speicher.merke(dea);
 						repaint();
 						dea.setUngespeichert();
@@ -204,15 +177,8 @@ public class LeinwandDEA extends JPanel {
 				});
 				menu.add(item);
 				item = new JMenuItem("Abbrechen");
-				item.addActionListener(new ActionListener() {
-
-					@Override
-					public void actionPerformed(ActionEvent e) {
-						
-					}
-				});
 				menu.add(item);
-				menu.show(e.getComponent(), zustand.getX(), zustand.getY()); 
+				menu.show(e.getComponent(), zuUm2.getX(), zuUm2.getY()); 
 			}
 
 		});
