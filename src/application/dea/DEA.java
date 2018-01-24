@@ -5,6 +5,7 @@
 package application.dea;
 
 import java.util.HashSet;
+import java.util.Set;
 import java.util.HashMap;
 import java.io.Serializable;
 import java.lang.Iterable;
@@ -526,6 +527,11 @@ public class DEA implements Serializable {
     /** gibt eine iterierbare Darstellung aller Zustandsobjekte zurueck */
     public Iterable<Zustand> getZustaende() {
         return zustaende.values();
+    }
+    
+    /** gibt eine iterierbare Darstellung aller Zustandsnamen zurueck */
+    public HashMap<String, Zustand> getZustaendeNamen() {
+        return zustaende;
     }
     
     /** zeigt alle im DEA enthaltenen Zustaende und Transitionen an */

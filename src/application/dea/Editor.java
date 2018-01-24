@@ -10,10 +10,13 @@ import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Set;
 import java.awt.Desktop;
 import java.awt.Dimension;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -775,19 +778,32 @@ public class Editor extends JFrame {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				JTextField von = new JTextField();
-				JTextField ueber = new JTextField(1);
-				JTextField zu = new JTextField();
+				String zustaende[] = new String[dea.getZustaendeNamen().size()];
+				int i = 0;
+				for(Zustand z : dea.getZustaende()) {
+					zustaende[i] = z.getName();
+					++i;
+				}
+				String alpha  = dea.getAlphabet();
+				String [] alphabet = new String[alpha.length()/2];
+				for(int j = 0; j < alpha.length(); j+=2) {
+					alphabet[j/2] = ""+alpha.charAt(j);
+				}
+				JComboBox von = new JComboBox(zustaende);
+				JComboBox ueber = new JComboBox(alphabet);
+				JComboBox zu = new JComboBox(zustaende);
+
 				Object[] message = {
 						" Von : ", von,
 						" Ueber : ", ueber,
 						" Zu : ", zu,
 				};
+				
 				int option = JOptionPane.showConfirmDialog(null, message, "Transition hinzufuegen", JOptionPane.OK_CANCEL_OPTION);
 				if (option == JOptionPane.OK_OPTION) {
 					char tra;
 					try {
-						tra = ueber.getText().charAt(0);
+						tra = alphabet[ueber.getSelectedIndex()].charAt(0);
 					}
 					catch(java.lang.StringIndexOutOfBoundsException ex1) {
 						JOptionPane.showMessageDialog(null, 
@@ -795,8 +811,8 @@ public class Editor extends JFrame {
 								"Fehler", JOptionPane.WARNING_MESSAGE);
 						return;
 					}
-					if (!dea.fuegeTransitionHinzu(von.getText(), tra,
-							zu.getText())) {
+					if (!dea.fuegeTransitionHinzu(zustaende[von.getSelectedIndex()], tra,
+							zustaende[zu.getSelectedIndex()])) {
 						JOptionPane.showMessageDialog(null, 
 								"Hinzufuegen der Transition war nicht erfolgreich",
 								"Fehler", JOptionPane.WARNING_MESSAGE);
