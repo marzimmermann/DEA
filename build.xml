@@ -2,11 +2,16 @@
 
 <project name="dea" default="archive">
     
-    <property name="build" value="./build/classes"/>
+    <property name="author.prj" value="Laura Hofer, Daniel Todt und Maria Zimmermann"/>
+    <property name="project.prj.lc" value="dea_editor"/>
+    <property name="project.prj.uc" value="DEA_EDITOR"/>
+    <property name="build.path" value="./build/classes"/>
+    <property name="data.path" value="./dist/data"/>
     <property name="dist" value="./dist"/>
+    <property name="jar.path" value="./dist/${project.prj.lc}.jar"/>
     
     <path id="project.class.path">
-        <pathelement path="${build}"/>
+        <pathelement path="${build.path}"/>
         <pathelement path="${dist}/data/icons"/>
         <pathelement path="${dist}/data/Bedienungsanleitung.pdf"/>
     </path>
@@ -38,14 +43,29 @@
             <arg file="./src/data/icons" />
             <arg file="./dist/data/icons" />
         </exec>
+        <exec executable="ln" error="/dev/null" os="Linux">
+            <arg line="-sn" />
+            <arg file="./src/data/Bedienungsanleitung.pdf" />
+            <arg file="./dist/data/Bedienungsanleitung.pdf" />
+        </exec>
+        <exec executable="ln" error="/dev/null" os="Linux">
+            <arg line="-sn" />
+            <arg file="./src/data/Was ist ein DEA.pdf" />
+            <arg file="./dist/data/Was ist ein DEA.pdf" />
+        </exec>
     </target>
     
-    <target name="archive" depends="compile">
-        <jar destfile="dist/dea.jar" basedir="build/classes">
-             <manifest>
-                 <attribute name="Main-Class" value="application.dea.Hauptklasse"/>
-                 <attribute name="Class-Path" value="dist/data/"/>
-             </manifest>
+    <target name="create-manifest" depends="init">
+        <manifest file="${build.path}/MANIFEST.MF">
+            <attribute name="Built-By" value="${author.prj}"/>
+            <attribute name="Main-Class" value="application.dea.Hauptklasse"/>
+        </manifest>
+    </target>
+            
+    <target name="archive" depends="create-data-links, create-manifest">
+        <jar destfile="dist/${project.prj.lc}-app.jar" manifest="${build.path}/MANIFEST.MF">
+            <fileset dir="${build.path}" excludes="**/testcases/**"/>
+            <fileset dir="${data.path}"/>
         </jar>
     </target>
     
@@ -76,12 +96,12 @@
     </target>
   
     <target name="test-remove-data-links" description="Ueberprueft, ob die Links zu den Daten existieren">
-        <condition property="isADir">
+        <condition property="isADataDir">
             <available file="./dist/data/icons" type="dir" />
         </condition>
     </target>
   
-    <target name="delete-data-links" depends="test-remove-data-links" if="isAdir" description="Loescht die Links zu den Daten" >
+    <target name="delete-data-links" depends="test-remove-data-links" if="isADatadir" description="Loescht die Links zu den Daten" >
         <exec executable="rm" error="/dev/null" os="Linux">
             <arg file="./dist/data/icons" />
         </exec>
