@@ -254,7 +254,7 @@ public class Tests {
 	
 	public static void test10(){
         String ausgabe = "", erwartet = "";
-        String[] a = new String[16];
+        String[] a = new String[17];
         DEA dea = new DEA("aDea");
         dea.fuegeZustandHinzu(false);
         a[0] = dea.toString();
@@ -307,8 +307,11 @@ public class Tests {
 		Speicher.merke(dea);
 		dea.fuegeTransitionHinzu("5",'0',"5");
 		Speicher.merke(dea);
+		a[16] = dea.toString();
+		dea.fuegeTransitionHinzu("5",'1',"5");
+		Speicher.merke(dea);
         
-        for(int i=15; i>0; i--){
+        for(int i=16; i>0; i--){
             dea = Speicher.nimmAenderungZurueck();
             if((dea.toString()).equals(a[i])){
                 //ausgabe += i +": " +dea.toString() +"\n";
@@ -322,8 +325,39 @@ public class Tests {
             }
         }
         
-        erwartet += "true,true,true,true,true,true,true,true,true,true,true,true,true,true,false,";
-		print("Test9: DEA rückgängig machen", "Test, ob die Methode die letzte Änderung korrekt und maximal 15 Änderungen rückgängig macht", "(DEA)", erwartet, ausgabe);
+        erwartet += "true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,false,";
+		print("Test10: DEA rückgängig machen", "Test, ob die Methode die letzte Änderung korrekt und maximal 15 Änderungen rückgängig macht", "(DEA)", erwartet, ausgabe);
+	}
+	
+	public static void test11(){
+        String erwartet = "", ausgabe = "";
+        DEA dea = new DEA("Dea");
+		dea.fuegeZustandHinzu(false);
+		dea.fuegeZustandHinzu(true);
+		dea.fuegeZeichenHinzu("xy");
+		dea.fuegeTransitionHinzu("0",'x',"1");
+		dea.fuegeTransitionHinzu("0",'y',"1");
+		dea.fuegeTransitionHinzu("1",'x',"1");
+		dea.fuegeTransitionHinzu("1",'y',"0");
+		
+		erwartet += dea.toString() +"\n";
+		dea.benneneZustandUm("0", "1"); //Erwarte: ändert sich nicht
+		ausgabe += dea.toString() +"\n";
+		
+		dea.benneneZustandUm("0", "2"); //Erwarte: ändert sich
+		ausgabe += dea.toString() +"\n";
+		
+		DEA d = new DEA("Dea");
+		d.fuegeZustandHinzu("1", true);
+		d.fuegeZustandHinzu("2",false);
+		d.fuegeZeichenHinzu("xy");
+		d.fuegeTransitionHinzu("1",'x',"1");
+		d.fuegeTransitionHinzu("1",'y',"2");
+		d.fuegeTransitionHinzu("2",'x',"1");
+		d.fuegeTransitionHinzu("2",'y',"1");
+		
+		erwartet += d.toString();
+        print("Test11: Zustand umbennen", "Test, ob sich der Name des Zustands ändert (kein schon vorhandener Name) und der restliche DEA erhalten bleibt", "(DEA)", erwartet, ausgabe);
 	}
 	
 	public static void main (String arv[]){
@@ -337,5 +371,6 @@ public class Tests {
 		test8();
 		test9();  
 		test10();
+		test11();
 	}
 }
