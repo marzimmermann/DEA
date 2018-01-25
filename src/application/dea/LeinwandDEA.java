@@ -100,9 +100,22 @@ public class LeinwandDEA extends JPanel {
 
 			@Override
 			public void mouseReleased(MouseEvent e) {
-				if(zustand != null){
-					int x = e.getX()-durchmesser/2;
-					int y = e.getY()-durchmesser/2;
+				if(e.isPopupTrigger()) {
+					if(zustand != null) {
+						erzeugePopUpMenue(e, zustand);
+
+					}
+					else if(zuUm != null) {
+						erzeugePopUpMenue(e, zuUm, tmp, tmpZeichen);
+					}
+					zuUm = null;
+					zustand = null;
+					tmp = null;
+				}
+				else{
+					if(zustand != null){
+						int x = e.getX()-durchmesser/2;
+						int y = e.getY()-durchmesser/2;
 
 						/* Verhindert, dass Zustand aus dem Panel gezogen wird */
 						zustand.setX(Math.max(0, Math.min(x, getWidth()-durchmesser)));
@@ -111,17 +124,18 @@ public class LeinwandDEA extends JPanel {
 						repaint();
 						dea.setUngespeichert();
 
+					}
+					else if(zuUm != null) {
+						zuUm.setX(Math.max(0, Math.min(e.getX(), getWidth()-transitionDurchmesser/2)));
+						zuUm.setY(Math.max(0, Math.min(e.getY(), getHeight()-transitionDurchmesser/2)));
+						Speicher.merke(dea);
+						repaint();
+						dea.setUngespeichert();
+					}
+					zustand = null;
+					zuUm= null;
+					tmp = null;
 				}
-				else if(zuUm != null) {
-					zuUm.setX(Math.max(0, Math.min(e.getX(), getWidth()-transitionDurchmesser/2)));
-					zuUm.setY(Math.max(0, Math.min(e.getY(), getHeight()-transitionDurchmesser/2)));
-					Speicher.merke(dea);
-					repaint();
-					dea.setUngespeichert();
-				}
-				zustand = null;
-				zuUm= null;
-				tmp = null;
 			}
 
 			private void erzeugePopUpMenue(MouseEvent e, Zustand zustand) {

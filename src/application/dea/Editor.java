@@ -53,11 +53,15 @@ public class Editor extends JFrame {
 			dea = new DEA("");
 		}
 		else {
+
+			setSize(konfig.getX(), konfig.getY());
 			if(dea.getName() !=""){
 				letzterGespeicherterDEA = dea.getName();
 				speichereDEA();
 			}
-			setSize(konfig.getX(), konfig.getY());
+			
+			
+			
 		}
 		Speicher.merke(dea);
 		createFrame();
@@ -646,6 +650,7 @@ public class Editor extends JFrame {
 				if(dea.istGesperrt()) {
 					dea.geheWeiter();
 					leinwand.repaint();
+					return;
 				}
 				else {
 					if(!dea.starte(eingabe.getText())) {
@@ -675,6 +680,10 @@ public class Editor extends JFrame {
 						}
 					}
 				}
+				dea.geheWeiter();
+				leinwand.repaint();
+				return;
+				
 			}
 		});
 		symbolleiste.add(button);
