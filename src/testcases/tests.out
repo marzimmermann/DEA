@@ -1,0 +1,240 @@
+Buildfile: /home/ma.zimmermann/Dokumente/3.Semester/DEA/build.xml
+
+init:
+
+test-set-data-links:
+
+create-data-links:
+
+compile:
+    [javac] Compiling 11 source files to /home/ma.zimmermann/Dokumente/3.Semester/DEA/build/classes
+    [javac] Note: /home/ma.zimmermann/Dokumente/3.Semester/DEA/src/application/dea/Editor.java uses unchecked or unsafe operations.
+    [javac] Note: Recompile with -Xlint:unchecked for details.
+
+execute-tests:
+     [java] ## Test1: Konfiguration testen
+     [java] # Test, ob man beim Laden die eben gespeicherte Konfiguration erhaelt
+     [java] # Eingabedaten: 
+     [java] test123,30L,10,20,testdea
+     [java] ## EOF
+     [java] # Erwartet Ausgabe:
+     [java] test123,30,10,20,testdea
+     [java] # Tatsaechliche Ausgabe:
+     [java] test123,30,10,20,testdea
+     [java] ## Test erfolgreich
+     [java] 
+     [java] ## Test2: DEA validieren
+     [java] # Methode validieren mit korrekten und falschen DEAs testen
+     [java] # Eingabedaten: 
+     [java] (DEA)
+     [java] ## EOF
+     [java] # Erwartet Ausgabe:
+     [java] false,true,false,true,false
+     [java] # Tatsaechliche Ausgabe:
+     [java] false,true,false,true,false
+     [java] ## Test erfolgreich
+     [java] 
+     [java] ## Test3: DEA minimieren
+     [java] # Methode minimieren mit validiertem DEA testen
+     [java] # Eingabedaten: 
+     [java] (DEA)
+     [java] ## EOF
+     [java] # Erwartet Ausgabe:
+     [java]   0 (true):
+     [java]      0 -> 0
+     [java]      1 -> 0
+     [java]   1 (false):
+     [java]      0 -> 0
+     [java]      1 -> 0
+     [java]   2 (false):
+     [java]      0 -> 3
+     [java]      1 -> 4
+     [java]   3 (false):
+     [java]      0 -> 5
+     [java]      1 -> 5
+     [java]   4 (false):
+     [java]      0 -> 6
+     [java]      1 -> 6
+     [java]   5 (false):
+     [java]      0 -> 1
+     [java]      1 -> 0
+     [java]   6 (false):
+     [java]      0 -> 0
+     [java]      1 -> 1
+     [java] 
+     [java] # Tatsaechliche Ausgabe:
+     [java]   0 (true):
+     [java]      0 -> 0
+     [java]      1 -> 0
+     [java]   1 (false):
+     [java]      0 -> 0
+     [java]      1 -> 0
+     [java]   2 (false):
+     [java]      0 -> 3
+     [java]      1 -> 4
+     [java]   3 (false):
+     [java]      0 -> 5
+     [java]      1 -> 5
+     [java]   4 (false):
+     [java]      0 -> 6
+     [java]      1 -> 6
+     [java]   5 (false):
+     [java]      0 -> 1
+     [java]      1 -> 0
+     [java]   6 (false):
+     [java]      0 -> 0
+     [java]      1 -> 1
+     [java] 
+     [java] ## Test erfolgreich
+     [java] 
+     [java] ## Test4: DEA minimieren2
+     [java] # Methode minimieren mit unvollständigem DEA testen, darf nicht minimiert werden
+     [java] # Eingabedaten: 
+     [java] (DEA)
+     [java] ## EOF
+     [java] # Erwartet Ausgabe:
+     [java] null
+     [java] # Tatsaechliche Ausgabe:
+     [java] null
+     [java] ## Test erfolgreich
+     [java] 
+     [java] ## Test5: DEA Zustaende hinzufuegen
+     [java] # Es duerfen keine Zustaende mit gleichem Namen existieren
+     [java] # Eingabedaten: 
+     [java] (DEA)
+     [java] ## EOF
+     [java] # Erwartet Ausgabe:
+     [java] false
+     [java] # Tatsaechliche Ausgabe:
+     [java] false
+     [java] ## Test erfolgreich
+     [java] 
+     [java] ## Test6: DEA Alphabet veraendern
+     [java] # Test,ob beim Loeschen von Symbolen des Alphabets auch zugehoerige Transitionen geloescht werden
+     [java] # Eingabedaten: 
+     [java] (DEA)
+     [java] ## EOF
+     [java] # Erwartet Ausgabe:
+     [java] false
+     [java] # Tatsaechliche Ausgabe:
+     [java] false
+     [java] ## Test erfolgreich
+     [java] 
+     [java] ## Test7: DEA ausfuehren
+     [java] # Test der Methoden starte(String eingabe), geheWeiter() und stoppe()
+     [java] # Eingabedaten: 
+     [java] (DEA)
+     [java] ## EOF
+     [java] # Erwartet Ausgabe:
+     [java] 01355
+     [java] # Tatsaechliche Ausgabe:
+     [java] 01355
+     [java] ## Test erfolgreich
+     [java] 
+     [java] ## Test8: unvollstaendigen DEA ausfuehren
+     [java] # Test, ob die Methoden starte(String eingabe), geheWeiter() und stoppe() nicht ausgefuehrt werden
+     [java] # Eingabedaten: 
+     [java] (DEA)
+     [java] ## EOF
+     [java] # Erwartet Ausgabe:
+     [java] 
+     [java] # Tatsaechliche Ausgabe:
+     [java] 
+     [java] ## Test erfolgreich
+     [java] 
+     [java] ## Test9: DEA speichern,laden und importieren
+     [java] # Test, der Methoden speichern,laden und importieren
+     [java] # Eingabedaten: 
+     [java] (DEA)
+     [java] ## EOF
+     [java] # Erwartet Ausgabe:
+     [java] DEA aDea:
+     [java]   0 (false):
+     [java]      x -> 1
+     [java]      y -> 1
+     [java]   1 (true):
+     [java]      x -> 1
+     [java]      y -> 0
+     [java] 
+     [java] DEA cDea:
+     [java]   0 (false):
+     [java]      x -> 1
+     [java]      y -> 1
+     [java]   1 (true):
+     [java]      x -> 1
+     [java]      y -> 0
+     [java] 
+     [java] # Tatsaechliche Ausgabe:
+     [java] DEA aDea:
+     [java]   0 (false):
+     [java]      x -> 1
+     [java]      y -> 1
+     [java]   1 (true):
+     [java]      x -> 1
+     [java]      y -> 0
+     [java] 
+     [java] DEA cDea:
+     [java]   0 (false):
+     [java]      x -> 1
+     [java]      y -> 1
+     [java]   1 (true):
+     [java]      x -> 1
+     [java]      y -> 0
+     [java] 
+     [java] ## Test erfolgreich
+     [java] 
+     [java] ## Test10: DEA rückgängig machen
+     [java] # Test, ob die Methode die letzte Änderung korrekt und maximal 15 Änderungen rückgängig macht
+     [java] # Eingabedaten: 
+     [java] (DEA)
+     [java] ## EOF
+     [java] # Erwartet Ausgabe:
+     [java] true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,false,
+     [java] # Tatsaechliche Ausgabe:
+     [java] true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,false,
+     [java] ## Test erfolgreich
+     [java] 
+     [java] ## Test11: Zustand umbennen
+     [java] # Test, ob sich der Name des Zustands ändert (kein schon vorhandener Name) und der restliche DEA erhalten bleibt
+     [java] # Eingabedaten: 
+     [java] (DEA)
+     [java] ## EOF
+     [java] # Erwartet Ausgabe:
+     [java] DEA Dea:
+     [java]   0 (false):
+     [java]      x -> 1
+     [java]      y -> 1
+     [java]   1 (true):
+     [java]      x -> 1
+     [java]      y -> 0
+     [java] 
+     [java] DEA Dea:
+     [java]   1 (true):
+     [java]      x -> 1
+     [java]      y -> 2
+     [java]   2 (false):
+     [java]      x -> 1
+     [java]      y -> 1
+     [java] 
+     [java] # Tatsaechliche Ausgabe:
+     [java] DEA Dea:
+     [java]   0 (false):
+     [java]      x -> 1
+     [java]      y -> 1
+     [java]   1 (true):
+     [java]      x -> 1
+     [java]      y -> 0
+     [java] 
+     [java] DEA Dea:
+     [java]   1 (true):
+     [java]      x -> 1
+     [java]      y -> 2
+     [java]   2 (false):
+     [java]      x -> 1
+     [java]      y -> 1
+     [java] 
+     [java] ## Test erfolgreich
+     [java] 
+
+BUILD SUCCESSFUL
+Total time: 2 seconds
