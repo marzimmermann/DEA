@@ -109,10 +109,12 @@ public class DEA implements Serializable {
     
     /** bennent einen Zustand um */
     public boolean benneneZustandUm(String von, String nach) {
-        Zustand tmp = zustaende.get(von);
-        if (tmp == null) {
+        if (von.equals(nach)) {
+            return true;
+        } else if (!zustaende.containsKey(von) || zustaende.containsKey(nach)) {
             return false;
         }
+        Zustand tmp = zustaende.get(von);
         gespeichert = false;
         tmp.setName(nach);
         zustaende.put(nach, tmp);
@@ -337,7 +339,7 @@ public class DEA implements Serializable {
         // pruefe, ob Minimierung geklappt hat
         tmp.validiere();
         if (!tmp.istValidiert()) {
-            throw new RuntimeException("Minimierung hat nicht funkioniert");
+            throw new RuntimeException("Minimierung hat nicht funktioniert");
         }
 
         return tmp;
