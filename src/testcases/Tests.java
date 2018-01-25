@@ -249,7 +249,7 @@ public class Tests {
 		e.importiere(dea);   //korrekt
 		ausgabe += (e.toString()).split("DEA cDea:")[1];
 		
-		print("Test9: DEA speicehrn,laden und importieren", "Test, der Methoden speichern,laden und importieren", "(DEA)", erwartet, ausgabe);
+		print("Test9: DEA speichern,laden und importieren", "Test, der Methoden speichern,laden und importieren", "(DEA)", erwartet, ausgabe);
 	}
 	
 	public static void test10(){
@@ -345,7 +345,7 @@ public class Tests {
 		ausgabe += dea.toString() +"\n";
 		
 		dea.benneneZustandUm("0", "2"); //Erwarte: ändert sich
-		ausgabe += dea.toString() +"\n";
+		ausgabe += dea.toString();
 		
 		DEA d = new DEA("Dea");
 		d.fuegeZustandHinzu("1", true);
