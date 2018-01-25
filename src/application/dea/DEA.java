@@ -294,10 +294,20 @@ public class DEA implements Serializable {
 		for (int i = 0; i < zust.length; i++) {
 			for (int j = 0; j < i; j++) {
 				if (!feld[j][i]) {
-					zustId++;
-					neuerZst[i] = zustId;
-					neuerZst[j] = zustId;
-					tmp.fuegeZustandHinzu(""+(zustId-1), zust[i].istAkzeptierend());
+                    int zId_tmp = 0;
+                    for (int k = 0; k < zust.length; k++) {
+                        if (((!feld[i][k] && !feld[k][i]) || (!feld[j][k] && !feld[k][j])) && neuerZst[k] != 0) {
+                            zId_tmp = neuerZst[k];
+                            break;
+                        }
+                    }
+                    if (zId_tmp == 0) {
+                        zustId++;
+                        zId_tmp = zustId;
+                        tmp.fuegeZustandHinzu(""+(zustId-1), zust[i].istAkzeptierend());
+					}
+					neuerZst[i] = zId_tmp;
+					neuerZst[j] = zId_tmp;
 				}
 			}
 		}
@@ -339,7 +349,8 @@ public class DEA implements Serializable {
 		}
 
 		// pruefe, ob Minimierung geklappt hat
-		tmp.validiere();
+		System.out.println(tmp.validiere());
+		System.out.println(tmp);
 		if (!tmp.istValidiert()) {
 			throw new RuntimeException("Minimierung hat nicht funktioniert");
 		}
