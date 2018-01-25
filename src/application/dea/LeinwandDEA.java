@@ -1,7 +1,6 @@
 package application.dea;
 
 import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -15,21 +14,14 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.font.FontRenderContext;
 import java.awt.font.GlyphVector;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
-import java.util.Iterator;
-import java.util.Map;
+import java.awt.image.BufferStrategy;
 import java.util.Map.Entry;
-
-import javax.imageio.ImageIO;
-import javax.swing.JList;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
-import javax.swing.JScrollPane;
-import javax.swing.Scrollable;
+
+
 
 import application.dea.Zustand.ZustandUmhueller;
 
@@ -43,10 +35,9 @@ public class LeinwandDEA extends JPanel {
 	private double selbstOvaldicke = 40;//Durchmesser des Ovals an der orthogonalen achse zwischen Zustand und Mitte
 	private double selbstAbstand = 40;//Mindestabstand der Mitte zum Zustand
 	private int fontSize = 20;
-	private String fileSeperator = System.getProperty("file.separator");
-	private String pfadIcons = "src"+fileSeperator+"data"+
-			fileSeperator+"icons"+fileSeperator+"StartArrow";
+ 
 
+	
 	public LeinwandDEA(DEA d){
 		super();
 		dea = d;
@@ -247,7 +238,8 @@ public class LeinwandDEA extends JPanel {
 	 */
 
 	public void repaintZustaende() {
-		Graphics2D g = (Graphics2D) getGraphics();
+		Graphics tmp = this.getGraphics().create(getX(), getY(), getWidth(),getHeight());
+		Graphics2D g = (Graphics2D) tmp;
 
 		//Bestimmte Schrifftart und textgroesse
 		g.setFont(new Font("TimesRoman", Font.PLAIN, fontSize)); 
@@ -255,6 +247,9 @@ public class LeinwandDEA extends JPanel {
 		//Mache Kanten weich
 		g.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
 				RenderingHints.VALUE_ANTIALIAS_ON);
+
+		g.setColor(Color.WHITE);
+		g.fillRect(0, 0, getWidth(), getHeight());
 		g.setColor(Color.BLACK);
 		for( Zustand z : dea.getZustaende()){
 			if(!dea.getAktuellerZustand().equals("")){
@@ -264,7 +259,15 @@ public class LeinwandDEA extends JPanel {
 			}
 			Point p = new Point(z.getX()+durchmesser/2, z.getY()+durchmesser/2);
 			zeichneZustand(g, p, z.getName(), durchmesser, z.istAkzeptierend());
+
+			//zeichne Pfeile
+			for (Entry<Character, ZustandUmhueller> entry : z.getTransitionen().entrySet()) {
+				char zeichen = entry.getKey();
+				ZustandUmhueller zUm = entry.getValue();
+				zeichnePfeile(g, z, zUm.getZustand(), zeichen);
+			}
 		}
+		
 	}
 
 	/**

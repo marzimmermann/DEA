@@ -424,6 +424,7 @@ public class Editor extends JFrame {
 						return;
 					}
 				}
+				leinwand.paintComponent(leinwand.getGraphics());
 				while(dea.istGesperrt()) {
 					try {
 						Thread.sleep(konfig.getDauer());
