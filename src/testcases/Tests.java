@@ -205,7 +205,7 @@ public class Tests {
 		ausgabe += dea.getAktuellerZustand();
 		dea.geheWeiter();
 		ausgabe += dea.getAktuellerZustand();
-		print("Test7: DEA ausfuehren", "Test der Methoden starte(String eingabe), geheWeiter() und stoppe()", "(DEA)", "01350", ausgabe);
+		print("Test7: DEA ausfuehren", "Test der Methoden starte(String eingabe), geheWeiter() und stoppe()", "(DEA)", "01355", ausgabe);
 	}
 	
 	public static void test8(){

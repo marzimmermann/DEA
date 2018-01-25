@@ -57,16 +57,14 @@ public class DEA implements Serializable {
 		if (!gesperrt) {
 			return;
 		}
+		aktuellerZustand = aktuellerZustand.getTransition(liesZeichen());
 		if (istFertig()) {
 			stoppe();
-			return;
 		}
-		aktuellerZustand = aktuellerZustand.getTransition(liesZeichen());
 	}
 
 	/** stoppt die aktuelle Ausfuehrung des Automaten */
 	public void stoppe() {
-		aktuellerZustand = start;
 		gesperrt = false;
 	}
 
@@ -441,7 +439,9 @@ public class DEA implements Serializable {
 	/** speichert den DEA im angegebenen Verzeichnis */
 	public DEA lade(String verzeichnis, String name) {
 		DEA tmp = (DEA) Speicher.lade(verzeichnis+fileSeperator+name+".dea");
-		tmp.gesperrt = false;
+		if (tmp != null) {
+            tmp.gesperrt = false;
+		}
 		return tmp;
 	}
 
