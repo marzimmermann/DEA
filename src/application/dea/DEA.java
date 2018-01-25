@@ -109,7 +109,9 @@ public class DEA implements Serializable {
     
     /** bennent einen Zustand um */
     public boolean benneneZustandUm(String von, String nach) {
-        if (von.equals(nach)) {
+        if (von == null || nach == null || von.isEmpty() || nach.isEmpty()) {
+            return false;
+        } else if (von.equals(nach)) {
             return true;
         } else if (!zustaende.containsKey(von) || zustaende.containsKey(nach)) {
             return false;
