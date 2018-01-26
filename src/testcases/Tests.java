@@ -1,5 +1,5 @@
 /**
- * Klasse zum Ausführen der Tests
+ * Klasse zum Ausfuehren der Tests
  */
 package application.dea;
 
@@ -7,7 +7,7 @@ package application.dea;
 public class Tests {
 	
 	/**
-	* Methode erzeugt formartierte Ausgabe der Testfälle
+	* Methode erzeugt formartierte Ausgabe der Testfaelle
 	* @param name
 	* @param bedeutung 
 	* @param eingabe
@@ -67,7 +67,7 @@ public class Tests {
 	}
 	
 	public static void test3(){
-		DEA dea = new DEA("großDEA");
+		DEA dea = new DEA("grossDEA");
 		dea.fuegeZustandHinzu(false);
 		dea.fuegeZustandHinzu(false);
 		dea.fuegeZustandHinzu(false);
@@ -98,7 +98,7 @@ public class Tests {
 		dea.fuegeTransitionHinzu("8",'1',"7");
 		dea.setStart("0");
 		dea = dea.minimiere();
-		String ausgabe = "" + (dea.toString()).split("DEA großDEA:\n")[1]; 
+		String ausgabe = "" + (dea.toString()).split("DEA grossDEA:\n")[1]; 
 		
 		DEA vergl = new DEA("kleinDEA");
 		vergl.fuegeZustandHinzu("2",false);
@@ -139,7 +139,7 @@ public class Tests {
 		dea.fuegeTransitionHinzu("1",'y',"0");
 		dea.validiere();
 		String ausgabe = "" +dea.minimiere();
-		print("Test4: DEA minimieren2", "Methode minimieren mit unvollständigem DEA testen, darf nicht minimiert werden", "(DEA)", "null", ausgabe);
+		print("Test4: DEA minimieren2", "Methode minimieren mit unvollstaendigem DEA testen, darf nicht minimiert werden", "(DEA)", "null", ausgabe);
 	}
 	
 	public static void test5(){
@@ -326,7 +326,7 @@ public class Tests {
         }
         
         erwartet += "true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,false,";
-		print("Test10: DEA rückgängig machen", "Test, ob die Methode die letzte Änderung korrekt und maximal 15 Änderungen rückgängig macht", "(DEA)", erwartet, ausgabe);
+		print("Test10: DEA rueckgaengig machen", "Test, ob die Methode die letzte Aenderung korrekt und maximal 15 Aenderungen rueckgaengig macht", "(DEA)", erwartet, ausgabe);
 	}
 	
 	public static void test11(){
@@ -341,10 +341,10 @@ public class Tests {
 		dea.fuegeTransitionHinzu("1",'y',"0");
 		
 		erwartet += dea.toString() +"\n";
-		dea.benneneZustandUm("0", "1"); //Erwarte: ändert sich nicht
+		dea.benneneZustandUm("0", "1"); //Erwarte: aendert sich nicht
 		ausgabe += dea.toString() +"\n";
 		
-		dea.benneneZustandUm("0", "2"); //Erwarte: ändert sich
+		dea.benneneZustandUm("0", "2"); //Erwarte: aendert sich
 		ausgabe += dea.toString();
 		
 		DEA d = new DEA("Dea");
@@ -357,7 +357,7 @@ public class Tests {
 		d.fuegeTransitionHinzu("2",'y',"1");
 		
 		erwartet += d.toString();
-        print("Test11: Zustand umbennen", "Test, ob sich der Name des Zustands ändert (kein schon vorhandener Name) und der restliche DEA erhalten bleibt", "(DEA)", erwartet, ausgabe);
+        print("Test11: Zustand umbennen", "Test, ob sich der Name des Zustands aendert (kein schon vorhandener Name) und der restliche DEA erhalten bleibt", "(DEA)", erwartet, ausgabe);
 	}
 	
 	public static void main (String arv[]){
