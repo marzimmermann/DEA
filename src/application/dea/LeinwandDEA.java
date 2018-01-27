@@ -4,6 +4,8 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.GraphicsConfiguration;
+import java.awt.GraphicsEnvironment;
 import java.awt.Point;
 import java.awt.Polygon;
 import java.awt.Rectangle;
@@ -15,14 +17,12 @@ import java.awt.event.MouseEvent;
 import java.awt.font.FontRenderContext;
 import java.awt.font.GlyphVector;
 import java.awt.image.BufferStrategy;
+import java.awt.image.BufferedImage;
 import java.util.Map.Entry;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
-
-
-
 import application.dea.Zustand.ZustandUmhueller;
 
 public class LeinwandDEA extends JPanel {
@@ -35,9 +35,11 @@ public class LeinwandDEA extends JPanel {
 	private double selbstOvaldicke = 40;//Durchmesser des Ovals an der orthogonalen achse zwischen Zustand und Mitte
 	private double selbstAbstand = 40;//Mindestabstand der Mitte zum Zustand
 	private int fontSize = 20;
- 
+	private final GraphicsConfiguration graphischeKonfig = 
+			GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDefaultConfiguration();
+	private BufferedImage offImg;
 
-	
+
 	public LeinwandDEA(DEA d){
 		super();
 		dea = d;
@@ -46,10 +48,19 @@ public class LeinwandDEA extends JPanel {
 			private Zustand zustand, tmp;
 			private ZustandUmhueller zuUm;
 			private char tmpZeichen;
+			private boolean startGeklickt;
+
 			@Override
 			public void mousePressed(MouseEvent e) {
 				int x = e.getX();
 				int y = e.getY();
+				if(!startGeklickt){
+					double dist = getAbstand(new Point(x,y), new Point(dea.getXStart(),dea.getYStart()));
+					if(dist <= transitionDurchmesser/2){
+						startGeklickt = true;
+						return;
+					}
+				}
 				if(zustand == null){
 
 					for( Zustand z : dea.getZustaende()){
@@ -104,7 +115,13 @@ public class LeinwandDEA extends JPanel {
 					tmp = null;
 				}
 				else{
-					if(zustand != null){
+					if(startGeklickt){
+						dea.setXYStart(e.getX(), e.getY());
+						Speicher.merke(dea);
+						repaint();
+						dea.setUngespeichert();
+					}
+					else if(zustand != null){
 						int x = e.getX()-durchmesser/2;
 						int y = e.getY()-durchmesser/2;
 
@@ -126,6 +143,7 @@ public class LeinwandDEA extends JPanel {
 					zustand = null;
 					zuUm= null;
 					tmp = null;
+					startGeklickt = false;
 				}
 			}
 
@@ -192,7 +210,11 @@ public class LeinwandDEA extends JPanel {
 	public void paintComponent(Graphics gr){
 		super.paintComponent(gr);
 
-		Graphics2D g = (Graphics2D) gr;
+		//Graphics2D g = (Graphics2D) gr;
+		Graphics2D g;
+		offImg = graphischeKonfig.createCompatibleImage( getWidth(), getHeight() );
+		g = (Graphics2D) offImg.createGraphics();
+
 
 		//Bestimmte Schrifftart und textgroesse
 		g.setFont(new Font("TimesRoman", Font.PLAIN, fontSize)); 
@@ -200,11 +222,18 @@ public class LeinwandDEA extends JPanel {
 		//Mache Kanten weich
 		g.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
 				RenderingHints.VALUE_ANTIALIAS_ON);
+		g.setRenderingHint( RenderingHints.  KEY_INTERPOLATION,
+				RenderingHints.VALUE_INTERPOLATION_BICUBIC);
 
 		g.setColor(Color.WHITE);
 		g.fillRect(0, 0, getWidth(), getHeight());
 		g.setColor(Color.BLACK);
 		for( Zustand z : dea.getZustaende()){
+			if(!dea.getStart().equals("")){
+				if(z.getName().equals(dea.getStart())){
+					zeichneStartPfeil(new Point(z.getX()+durchmesser/2, z.getY()+durchmesser/2), g);
+				}
+			}
 			if(!dea.getAktuellerZustand().equals("")){
 				if(z.getName().equals(dea.getAktuellerZustand())){
 					g.setColor(Color.MAGENTA);
@@ -220,7 +249,36 @@ public class LeinwandDEA extends JPanel {
 				zeichnePfeile(g, z, zUm.getZustand(), zeichen);
 			}
 		}
+		gr.drawImage( offImg, 0, 0, this );
 	}
+
+	public BufferedImage getImage(){
+		return offImg;
+	}
+
+	private void zeichneStartPfeil(Point point, Graphics2D g) {
+		Point start = new Point(0, 0);
+		if(dea.getStart().equals("") || dea.getXStart() == -1){
+			if(dea.getXStart() == -1){
+				System.out.println("TEST");
+			}
+			start.setLocation(Math.max(point.getX()-70, 0), point.getY());
+		}
+		else{
+			start.setLocation(dea.getXStart(), dea.getYStart());
+		}
+		g.fillOval((int)start.getX()-transitionDurchmesser/2, (int)start.getY()-transitionDurchmesser/2,
+				transitionDurchmesser, transitionDurchmesser);
+		dea.setXYStart((int)start.getX(), (int) start.getY());
+		double laengeZustandPunkt = getAbstand(start, point);
+		if(laengeZustandPunkt >= durchmesser/2 + transitionDurchmesser/2){
+			Point schnittZustand  = new Point((int)(point.getX()+(durchmesser/2)*((start.getX()-point.getX())/laengeZustandPunkt)),
+					(int)(point.getY()+(durchmesser/2)*((start.getY()-point.getY())/laengeZustandPunkt)));
+			g.drawLine((int)start.getX(), (int)start.getY(), (int)schnittZustand.getX(), (int)schnittZustand.getY());
+			zeichnePfeilspitze(g, schnittZustand, start);
+		}
+	}
+
 	/**
 	 * 
 	 * @param aktueller DEA d
@@ -230,44 +288,6 @@ public class LeinwandDEA extends JPanel {
 	public void setDEA(DEA d){
 		dea = d;
 		repaint();
-	}
-
-	/**
-	 * Gedacht, um beim Starten nur die Zustaende 
-	 * neu zu zeichnen
-	 */
-
-	public void repaintZustaende() {
-		Graphics tmp = this.getGraphics().create(getX(), getY(), getWidth(),getHeight());
-		Graphics2D g = (Graphics2D) tmp;
-
-		//Bestimmte Schrifftart und textgroesse
-		g.setFont(new Font("TimesRoman", Font.PLAIN, fontSize)); 
-
-		//Mache Kanten weich
-		g.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
-				RenderingHints.VALUE_ANTIALIAS_ON);
-
-		g.setColor(Color.WHITE);
-		g.fillRect(0, 0, getWidth(), getHeight());
-		g.setColor(Color.BLACK);
-		for( Zustand z : dea.getZustaende()){
-			if(!dea.getAktuellerZustand().equals("")){
-				if(z.getName().equals(dea.getAktuellerZustand())){
-					g.setColor(Color.MAGENTA);
-				}
-			}
-			Point p = new Point(z.getX()+durchmesser/2, z.getY()+durchmesser/2);
-			zeichneZustand(g, p, z.getName(), durchmesser, z.istAkzeptierend());
-
-			//zeichne Pfeile
-			for (Entry<Character, ZustandUmhueller> entry : z.getTransitionen().entrySet()) {
-				char zeichen = entry.getKey();
-				ZustandUmhueller zUm = entry.getValue();
-				zeichnePfeile(g, z, zUm.getZustand(), zeichen);
-			}
-		}
-		
 	}
 
 	/**
@@ -342,7 +362,7 @@ public class LeinwandDEA extends JPanel {
 		}
 	}
 
-	void zeichnePfeilSelbst(Graphics2D g, Zustand a, char Transition)
+	private void zeichnePfeilSelbst(Graphics2D g, Zustand a, char Transition)
 	{
 		Point p1 = new Point(a.getX()+durchmesser/2, a.getY()+durchmesser/2);
 		Point mid = new Point(a.getZustandhuelleTransition(Transition).getX(),
@@ -395,8 +415,6 @@ public class LeinwandDEA extends JPanel {
 
 		//zeiche den Namen des Zustandes
 		g.setColor(Color.BLACK);
-		int textBreite = g.getFontMetrics().stringWidth(text);
-		//g.drawString(text, (int)p.getX()-textBreite/2, (int)p.getY()+3);
 		zeichneString(g, text, (int)p.getX(), (int)p.getY(), durchmesser);
 	}
 
@@ -509,7 +527,7 @@ public class LeinwandDEA extends JPanel {
 	public double angle(Point p1, Point p2)
 	{
 		return Math.atan2(p2.getY()-p1.getY(), p2.getX()-p1.getX());
-	}
+	} 
 
 	/**
 	 * Berechne groesse und breite des Strings str

@@ -21,6 +21,7 @@ public class DEA implements Serializable {
 	private HashMap<String, Zustand> zustaende = new HashMap<>();
 	private Zustand start, aktuellerZustand ;
 	private String fileSeperator = System.getProperty("file.separator");
+	private int xStart = -1, yStart;
 
 	/*
 	 * Konstruktoren
@@ -549,6 +550,22 @@ public class DEA implements Serializable {
 	/** gibt eine iterierbare Darstellung aller Zustandsnamen zurueck */
 	public HashMap<String, Zustand> getZustaendeNamen() {
 		return zustaende;
+	}
+
+	/** gibt die X-Koordinate des Startkreises zurueck */
+	public int getXStart() {
+		return xStart;
+	}
+
+	/** gibt die X-Koordinate des Startkreises zurueck */
+	public int getYStart() {
+		return yStart;
+	}
+	
+	/** setzt X- und Y-Koordinate des Startkreises */
+	public void setXYStart(int xStart, int yStart) {
+		this.xStart = xStart;
+		this.yStart = yStart;
 	}
 
 	/** zeigt alle im DEA enthaltenen Zustaende und Transitionen an */

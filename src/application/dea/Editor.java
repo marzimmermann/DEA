@@ -8,12 +8,18 @@ import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Set;
 import java.awt.Desktop;
 import java.awt.Dimension;
+import java.awt.Graphics2D;
+import java.awt.GraphicsConfiguration;
+import java.awt.GraphicsEnvironment;
+
+import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -41,6 +47,7 @@ public class Editor extends JFrame {
 	private LeinwandDEA leinwand;
 	private JTextField eingabe;
 	private String fileSeperator = System.getProperty("file.separator");
+
 	/**
 	 * Create the frame.
 	 */
@@ -59,9 +66,9 @@ public class Editor extends JFrame {
 				letzterGespeicherterDEA = dea.getName();
 				speichereDEA();
 			}
-			
-			
-			
+
+
+
 		}
 		Speicher.merke(dea);
 		createFrame();
@@ -304,6 +311,26 @@ public class Editor extends JFrame {
 					}
 				}
 				JOptionPane.showMessageDialog(getRootPane(), "Fehlerhafter Datei. Importieren nicht moeglich", "Fehler", JOptionPane.ERROR_MESSAGE);
+			}
+		});
+		reiter.add(item);
+		item = new JMenuItem("DEA als png exportieren", KeyEvent.VK_E);
+		item.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				try {
+				    // retrieve image
+				    BufferedImage bi = leinwand.getImage();
+				    File outputfile = new File(konfig.getArbeitsverzeichnis()+fileSeperator+dea.getName()+".png");
+				    ImageIO.write(bi, "png", outputfile);
+				    JOptionPane.showMessageDialog(null, "Der DEA wurde erfolgreich in Ihrem Arbeitsverzeichnis"
+				    		+ " gespeichert.", "Exportieren erfolgreich", JOptionPane.PLAIN_MESSAGE);
+				} catch (IOException e12) {
+				   JOptionPane.showMessageDialog(null, "Fehler beim Exportieren der Datei",
+						   "Der DEA konnte nicht als png-Datei exportiert werden", JOptionPane.ERROR_MESSAGE);
+				}
+				
 			}
 		});
 		reiter.add(item);
@@ -684,7 +711,7 @@ public class Editor extends JFrame {
 				dea.geheWeiter();
 				leinwand.repaint();
 				return;
-				
+
 			}
 		});
 		symbolleiste.add(button);
@@ -808,7 +835,7 @@ public class Editor extends JFrame {
 						" Ueber : ", ueber,
 						" Zu : ", zu,
 				};
-				
+
 				int option = JOptionPane.showConfirmDialog(null, message, "Transition hinzufuegen", JOptionPane.OK_CANCEL_OPTION);
 				if (option == JOptionPane.OK_OPTION) {
 					char tra;
@@ -844,15 +871,29 @@ public class Editor extends JFrame {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				String start = JOptionPane.showInputDialog(null, 
-						"Startzustand eingeben", "Start waehlen", JOptionPane.QUESTION_MESSAGE);
-				if(!dea.setStart(start)) {
-					JOptionPane.showMessageDialog(null, "Kein Gueltiger Zustand", 
-							"Startzustand waehlen fehlgeschlagen", JOptionPane.ERROR_MESSAGE);
-					return;
+				String zustaende[] = new String[dea.getZustaendeNamen().size()];
+				int i = 0;
+				for(Zustand z : dea.getZustaende()) {
+					zustaende[i] = z.getName();
+					++i;
 				}
-				Speicher.merke(dea);
-				leinwand.setDEA(dea);
+				JComboBox start = new JComboBox(zustaende);
+
+				Object[] message = {
+						" Startzustand: ", start
+				};
+				int option = JOptionPane.showConfirmDialog(null, message, "Startzustand waehlen:", JOptionPane.OK_CANCEL_OPTION);
+				if (option == JOptionPane.OK_OPTION) {
+					if (!dea.setStart(zustaende[start.getSelectedIndex()])) {
+						JOptionPane.showMessageDialog(null, 
+								"Startzustand waehlen nicht erfolgreich",
+								"Fehler", JOptionPane.WARNING_MESSAGE);
+					}
+					else {
+						Speicher.merke(dea);
+						leinwand.setDEA(dea);
+					}
+				}
 			}
 		});
 		symbolleiste.add(button);
