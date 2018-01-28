@@ -116,7 +116,8 @@ public class LeinwandDEA extends JPanel {
 				}
 				else{
 					if(startGeklickt){
-						dea.setXYStart(e.getX(), e.getY());
+						dea.setXYStart(Math.max(0+transitionDurchmesser/2, Math.min(e.getX(), getWidth()-transitionDurchmesser/2)),
+								Math.max(0+transitionDurchmesser/2, Math.min(e.getY(),getHeight()-transitionDurchmesser/2)));
 						Speicher.merke(dea);
 						repaint();
 						dea.setUngespeichert();
@@ -134,8 +135,8 @@ public class LeinwandDEA extends JPanel {
 
 					}
 					else if(zuUm != null) {
-						zuUm.setX(Math.max(0, Math.min(e.getX(), getWidth()-transitionDurchmesser/2)));
-						zuUm.setY(Math.max(0, Math.min(e.getY(), getHeight()-transitionDurchmesser/2)));
+						zuUm.setX(Math.max(0+transitionDurchmesser/2, Math.min(e.getX(), getWidth()-transitionDurchmesser/2)));
+						zuUm.setY(Math.max(0+transitionDurchmesser/2, Math.min(e.getY(), getHeight()-transitionDurchmesser/2)));
 						Speicher.merke(dea);
 						repaint();
 						dea.setUngespeichert();

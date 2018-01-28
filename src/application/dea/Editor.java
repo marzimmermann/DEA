@@ -316,21 +316,23 @@ public class Editor extends JFrame {
 		reiter.add(item);
 		item = new JMenuItem("DEA als png exportieren", KeyEvent.VK_E);
 		item.addActionListener(new ActionListener() {
-			
+
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				try {
-				    // retrieve image
-				    BufferedImage bi = leinwand.getImage();
-				    File outputfile = new File(konfig.getArbeitsverzeichnis()+fileSeperator+dea.getName()+".png");
-				    ImageIO.write(bi, "png", outputfile);
-				    JOptionPane.showMessageDialog(null, "Der DEA wurde erfolgreich in Ihrem Arbeitsverzeichnis"
-				    		+ " gespeichert.", "Exportieren erfolgreich", JOptionPane.PLAIN_MESSAGE);
-				} catch (IOException e12) {
-				   JOptionPane.showMessageDialog(null, "Fehler beim Exportieren der Datei",
-						   "Der DEA konnte nicht als png-Datei exportiert werden", JOptionPane.ERROR_MESSAGE);
+				if(speichereDEA()){
+					try {
+						// retrieve image
+						BufferedImage bi = leinwand.getImage();
+						File outputfile = new File(konfig.getArbeitsverzeichnis()+fileSeperator+dea.getName()+".png");
+						ImageIO.write(bi, "png", outputfile);
+						JOptionPane.showMessageDialog(null, "Der DEA wurde erfolgreich in Ihrem Arbeitsverzeichnis"
+								+ " gespeichert.", "Exportieren erfolgreich", JOptionPane.PLAIN_MESSAGE);
+					} catch (IOException e12) {
+						JOptionPane.showMessageDialog(null, "Fehler beim Exportieren der Datei",
+								"Der DEA konnte nicht als png-Datei exportiert werden", JOptionPane.ERROR_MESSAGE);
+					}
+
 				}
-				
 			}
 		});
 		reiter.add(item);
