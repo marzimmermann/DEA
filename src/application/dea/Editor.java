@@ -710,7 +710,7 @@ public class Editor extends JFrame {
 						}
 					}
 				}
-				dea.geheWeiter();
+				
 				leinwand.repaint();
 				return;
 
