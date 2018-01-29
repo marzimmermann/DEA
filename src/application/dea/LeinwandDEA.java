@@ -209,7 +209,7 @@ public class LeinwandDEA extends JPanel {
 	}
 	@Override
 	public void paintComponent(Graphics gr){
-		super.paintComponent(gr);
+		//super.paintComponent(gr);
 
 		//Graphics2D g = (Graphics2D) gr;
 		Graphics2D g;
